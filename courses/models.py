@@ -7,7 +7,6 @@ class Course(models.Model):
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     open_status = models.BooleanField(default=True)
-    thumb = models.ImageField(default='default.png', blank=True)
 
     def __str__(self):
         return self.title
@@ -18,19 +17,32 @@ class Course(models.Model):
 class Module(models.Model):
     title = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
-    thumb = models.ImageField(default='default.png', blank=True)
     Course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
     def __str__(self):
         return self.title
 
-# either text or image?
 class Component(models.Model):
     title = models.CharField(max_length=100)
     text_content = models.TextField()
-    image_content = models.ImageField(default='default.png', blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
     Module = models.ForeignKey(Module, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
+
+class QuizQuestion(models.Model):
+    question_text = models.CharField(max_length=200)
+    pub_date = models.DateTimeField('date published')
+    def __str__(self):
+        return self.question_text
+
+
+class QuizChoice(models.Model):
+    question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
+    choice_text = models.CharField(max_length=200)
+    value = models.IntegerField(default=0)
+    def __str__(self):
+        return self.choice_text
+
+    
