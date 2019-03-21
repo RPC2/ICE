@@ -5,7 +5,7 @@
     <div class="courses">
     {% for course in courses %}
         <div class="course">
-            <h2><a href="{% url 'courses:instructor-modules' slug=course.slug %}">{{ course.title }}</a></h2>
+            <h2><a href="{% url 'instructors:instructor-modules' slug=course.slug %}">{{ course.title }}</a></h2>
             <img src="{{course.thumb.url}}" style="height: 100px;width: 60px">
             <p>{{ course.snippet }}</p>
             <p>{{ course.date }}</p>

@@ -7,8 +7,8 @@
             <p>{{ component.title }}</p>
             <p>{{ component.date }}</p>
         </div>
-
         {% endfor %}
+    <a href="{% url 'instructors:instructor-add-component' moduleid=module.id %}">Add Component</a>
     </div>
 </div>
 {% endblock %}

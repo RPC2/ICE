@@ -1,5 +1,5 @@
 from django.db import models
-
+from instructors.models import Instructor
 # Create your models here.
 class Course(models.Model):
     title = models.CharField(max_length=100)
@@ -8,6 +8,7 @@ class Course(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     open_status = models.BooleanField(default=True)
     thumb = models.ImageField(default='default.png', blank=True)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -18,7 +19,6 @@ class Course(models.Model):
 class Module(models.Model):
     title = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
-    thumb = models.ImageField(default='default.png', blank=True)
     Course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
     def __str__(self):
         return self.title
