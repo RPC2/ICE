@@ -1,0 +1,15 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<div class="course-detail">
+    <div class="course">
+        {% for module in modules %}
+        <div class="modulelist">
+            <h2><a href="{% url 'courses:instructor-components' id=module.id %}">{{ module.title }}</a></h2>
+            <p>{{ module.title }}</p>
+            <p>{{ module.date }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
