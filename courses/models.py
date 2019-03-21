@@ -1,5 +1,5 @@
 from django.db import models
-
+from instructors.models import Instructor
 # Create your models here.
 class Course(models.Model):
     title = models.CharField(max_length=100)
