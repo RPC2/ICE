@@ -24,10 +24,10 @@ class Module(models.Model):
 class Component(models.Model):
     title = models.CharField(max_length=100)
     text_content = models.TextField()
+    image_content = models.ImageField(default='default.png', blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
     Module = models.ForeignKey(Module, on_delete=models.CASCADE)
-
     def __str__(self):
         return self.title
 
