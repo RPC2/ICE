@@ -5,7 +5,7 @@
         {% for component in components %}
         <div class="componentlist">
             <p>{{ component.text_content }}</p>
-            <img src="{{component.image_content}}" style="height: 100px;width: 60px">
+            <img src="{{component.image_content.url}}" style="height: 100px;width: 60px">
         </div>
         {% endfor %}
     <a href="{% url 'instructors:instructor-add-component' moduleid=module.id %}">Add Component</a>

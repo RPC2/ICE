@@ -11,3 +11,13 @@ class createComponent(forms.ModelForm):
     class Meta:
         model = models.Component
         fields = ['title', 'text_content', 'image_content']
+
+class createComponent(forms.ModelForm):
+    class Meta:
+        model = models.Component
+        fields = ['title', 'text_content', 'image_content']
+
+class createQuiz(forms.ModelForm):
+    class Meta:
+        model = models.Component
+        fields = ['title', 'text_content', 'image_content']
