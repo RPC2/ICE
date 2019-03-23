@@ -1,0 +1,14 @@
+{% extends 'base_layout.html' %}
+{% block content %}
+<div class="module-detail">
+    <div class="component">
+        {% for component in components %}
+        <div class="componentlist">
+            <p>{{ component.text_content }}</p>
+            <img src="{{component.image_content}}" style="height: 100px;width: 60px">
+        </div>
+        {% endfor %}
+    <a href="{% url 'instructors:instructor-add-component' moduleid=module.id %}">Add Component</a>
+    </div>
+</div>
+{% endblock %}

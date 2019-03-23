@@ -1,6 +1,5 @@
 from django.db import models
-
-
+from instructors.models import Instructor
 # Create your models here.
 class Course(models.Model):
     title = models.CharField(max_length=100)
@@ -8,6 +7,8 @@ class Course(models.Model):
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     open_status = models.BooleanField(default=True)
+    thumb = models.ImageField(default='default.png', blank=True)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -28,10 +29,10 @@ class Module(models.Model):
 class Component(models.Model):
     title = models.CharField(max_length=100)
     text_content = models.TextField()
+    image_content = models.ImageField(default='default.png', blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
     Module = models.ForeignKey(Module, on_delete=models.CASCADE)
-
     def __str__(self):
         return self.title
 
@@ -51,5 +52,3 @@ class QuizChoice(models.Model):
 
     def __str__(self):
         return self.choice_text
-
-    

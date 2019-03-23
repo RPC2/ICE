@@ -1,0 +1,14 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+<div class="course-detail">
+    <div class="course">
+        {% for module in modules %}
+        <div class="modulelist">
+            <h2><a href="{% url 'instructors:instructor-module-detail' moduleid=module.id %}">{{ module.title }}</a></h2>
+        </div>
+        {% endfor %}
+    <a href="{% url 'instructors:instructor-add-module' courseid=course.id %}">Add Module</a>
+    </div>
+</div>
+{% endblock %}
