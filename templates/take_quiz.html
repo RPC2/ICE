@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<h1>Quiz</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form>
+{% csrf_token %}
+{% for i in num_of_question %}
+    <p>{{q_list.i}}</p>
+    {% for choice in c_list %}
+        <p>{{ choice.choice_text }}</p>
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+{% endfor %}
+<input type="submit" value="Submit">
+</form>

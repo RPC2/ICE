@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Learner(models.Model):
-    name = models.CharField(max_length=100)
+    username = models.CharField(max_length=100)
     staff_id = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
