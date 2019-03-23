@@ -7,7 +7,9 @@ class Course(models.Model):
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     open_status = models.BooleanField(default=True)
-
+    thumb = models.ImageField(default='default.png', blank=True)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    
     def __str__(self):
         return self.title
 
