@@ -1,5 +1,6 @@
 from django import forms
 from courses import models
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 class createModule(forms.ModelForm):
     class Meta:

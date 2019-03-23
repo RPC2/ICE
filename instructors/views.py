@@ -9,7 +9,8 @@ from . import forms
 def instructor_course_list(request):
     current_user = request.user
     # courses = Course.objects.filter(instructor_id = current_user.id).order_by('date');
-    courses = Course.objects.filter(id=1).order_by('date');
+    courses = Course.objects.filter( instructor_id=1).order_by('date');
+    print(courses)
     return render(request, 'instructor_course_list.html', {'courses': courses})
 
 def instructor_modules(request, slug):
@@ -42,6 +43,10 @@ def add_component(request, moduleid):
             instance = form.save(commit=False)
             module = Module.objects.get(id=moduleid)
             instance.Module = module
+            # instance.image_content = form.cleaned_data['image_content']
+            # instance.image_content = form.cleaned_data['image']
+            print("herer")
+            print(instance.image_content)
             instance.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
