@@ -33,6 +33,7 @@ class Component(models.Model):
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
     Module = models.ForeignKey(Module, on_delete=models.CASCADE)
+
     def __str__(self):
         return self.title
 

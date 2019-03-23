@@ -6,7 +6,7 @@
 <form>
 {% csrf_token %}
 {% for i in num_of_question %}
-    <p>{{q_list.0}}</p>
+    <p>{{q_list.i}}</p>
     {% for choice in c_list %}
         <p>{{ choice.choice_text }}</p>
         <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
