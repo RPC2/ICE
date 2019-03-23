@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_list_or_404, render
+from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 
@@ -8,8 +8,7 @@ from courses.models import *
 
 
 def view_quiz(request):
-    course = Course.objects.get(title__startswith="Intro")
-    module = course.module_set.get(title__startswith="Chapter 1")
+    module = get_object_or_404(Module, title__startswith="Chapter 1")
     question_list = list(module.quizquestion_set.all())
 
     choice_list = []

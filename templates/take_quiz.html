@@ -3,15 +3,15 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form>
 {% csrf_token %}
-{% for i in num_of_question %}
-    <p>{{q_list.i}}</p>
-    {% for choice in c_list %}
-        <p>{{ choice.choice_text }}</p>
+{% for q in q_list %}
+    <form>
+    <p>{{q.question_text}}</p>
+    {% for choice in q.quizchoice_set.all %}
         <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
     {% endfor %}
+    </form>
 {% endfor %}
 <input type="submit" value="Submit">
-</form>
+
