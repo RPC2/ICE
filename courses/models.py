@@ -9,7 +9,7 @@ class Course(models.Model):
     open_status = models.BooleanField(default=True)
     thumb = models.ImageField(default='default.png', blank=True)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return self.title
 
