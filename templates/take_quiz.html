@@ -4,14 +4,16 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 {% csrf_token %}
-{% for q in q_list %}
-    <form>
-    <p>{{q.question_text}}</p>
-    {% for choice in q.quizchoice_set.all %}
-        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+<form action="learner/take_quiz/" method="post">
+    {% for q in q_list %}
+        <form>
+            <p>{{q.question_text}}</p>
+            {% for choice in q.quizchoice_set.all %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% endfor %}
+        </form>
     {% endfor %}
-    </form>
-{% endfor %}
+<br>
 <input type="submit" value="Submit">
-
+</form>

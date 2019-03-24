@@ -5,6 +5,7 @@ from django.views import generic
 
 from .models import *
 from courses.models import *
+from learners.models import *
 
 
 def view_quiz(request):
@@ -19,20 +20,29 @@ def view_quiz(request):
                                               'c_list': choice_list})
 
 
-def take_quiz(request, ):
-    learner_progress = 0 # TODO: Find the learner's progress from the username
-    quiz_module = learner_progress
-    questions = get_list_or_404(QuizQuestion, pk=quiz_module)
-    try:
-        selected_choice = questions.quizchoice_set.get(pk=request.POST['quizChoice'])
-    except (KeyError, QuizChoice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'take_quiz.html', {
-            'question': questions,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
+def take_quiz(request):
+    module = get_object_or_404(Module, title__startswith="Chapter 1")
+    question_list = list(module.quizquestion_set.all())
 
-        return HttpResponseRedirect(reverse('templates:results', args=(QuizQuestion.Module,)))
+    print("Hi there")
+
+    total = 0
+
+    for q in question_list:
+        selected_choice = q.quizchoice_set.get(pk=request.POST['choice'])
+        score = selected_choice.value
+        total += score
+
+    quiz_result = QuizResult.objects.create(total_score = total)
+    print(total)
+    return HttpResponseRedirect('learners:view_result')
+
+
+def view_result(request):
+    latest_submission = QuizResult.objects.get(pk=len(list(QuizResult.objects.all())))
+    if latest_submission.total_score > 10:
+        result = "passed"
+    else:
+        result = 'failed'
+    return render(request, 'quiz_result.html', {'total_score': latest_submission.total_score,
+                                                'pass_or_fail': result})
