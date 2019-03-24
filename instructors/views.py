@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render, redirect
-from courses.models import Course, Module, Component
+from courses.models import Course, Module, Component, QuizQuestion, QuizChoice
 from django.contrib.auth.decorators import login_required
 from . import forms
 
@@ -43,8 +43,6 @@ def add_component(request, moduleid):
             instance = form.save(commit=False)
             module = Module.objects.get(id=moduleid)
             instance.Module = module
-            # instance.image_content = form.cleaned_data['image_content']
-            # instance.image_content = form.cleaned_data['image']
             print("herer")
             print(instance.image_content)
             instance.save()
@@ -52,3 +50,32 @@ def add_component(request, moduleid):
     else:
         form = forms.createComponent()
         return render(request, 'add_component.html', {'form':form, 'moduleid':moduleid})
+
+def add_quiz(request, moduleid):
+    if request.method == 'POST':
+        form = forms.createQuiz(request.POST, moduleid= moduleid)
+        if form.is_valid():
+            #switch selected to True
+            print(form.cleaned_data.get('questions'))
+            questionids = form.cleaned_data.get('questions')
+            for id in questionids:
+                question = QuizQuestion.objects.get(id=id)
+                question.selected = True
+                question.save()
+            module = Module.objects.get(id=moduleid)
+            return redirect('instructors:instructor-module-detail', moduleid=module.id)
+    else:
+        form = forms.createQuiz(moduleid= moduleid)
+        return render(request, 'add_quiz.html', {'form':form, 'moduleid':moduleid})
+
+def instructor_view_quiz(request, moduleid):
+    questions = QuizQuestion.objects.filter(module_id=moduleid);
+    # choices = QuizChoice.objects.filter(moduleid_id=moduleid);
+    choices = {}
+    for question in questions:
+        if question.selected == True:
+            answers = QuizChoice.objects.filter(question_id = question.id)
+            choices[question] = answers
+
+    print(choices)
+    return render(request, 'instructor_view_quiz.html', {'questions': questions, 'choices': choices})
