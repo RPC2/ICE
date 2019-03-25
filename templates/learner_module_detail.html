@@ -1,0 +1,15 @@
+{% extends 'base_layout.html' %}
+{% block content %}
+<div class="module-detail">
+    <div class="component">
+        {% for component in components %}
+        <div class="componentlist">
+{#            <p>{{ component.title }}</p>#}
+            <p>{{ component.text_content }}</p>
+            <img src="{{component.image_content.url}}" style="height: 100px;width: 60px">
+{#            <p>{{ component.date }}</p>#}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
