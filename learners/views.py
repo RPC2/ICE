@@ -26,8 +26,8 @@ def module_detail(request, moduleid):
     return render(request, 'learner_module_detail.html', {'components': components, 'module': module})
 
 @csrf_protect
-def take_quiz(request):
-    module = get_object_or_404(Module, title__startswith="Chapter 1")
+def take_quiz(request, module):
+    # module = get_object_or_404(Module, title__startswith="Chapter 1")
     question_list = list(module.quizquestion_set.filter(selected=True))
 
     if request.method == 'POST':

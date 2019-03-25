@@ -4,12 +4,11 @@
     <div class="component">
         {% for component in components %}
         <div class="componentlist">
-{#            <p>{{ component.title }}</p>#}
             <p>{{ component.text_content }}</p>
             <img src="{{component.image_content.url}}" style="height: 100px;width: 60px">
-{#            <p>{{ component.date }}</p>#}
         </div>
         {% endfor %}
     </div>
+    <a href="{% url 'learners:take_quiz' module=module %}"  style="display: block;">Add Component</a>
 </div>
 {% endblock %}
