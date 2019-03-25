@@ -10,7 +10,19 @@ from courses.models import *
 from courses.forms import *
 from learners.models import *
 
-
+def user_center(request):
+    return render(request, 'usercenter-base.html')
+def active_course(request):
+    activecourses = Course.objects.all()
+    return render(request, 'usercenter-activecourse.html', {'courses': activecourses})
+def course_detail(request,slug):
+    course = Course.objects.get(slug=slug)
+    modules = Module.objects.filter(Course_id=course.id)
+    return render(request, 'learner_course_detail.html', {'course': course, 'modules': modules})
+def module_detail(request, moduleid):
+    module = Module.objects.get(id=moduleid)
+    components = Component.objects.filter(Module_id=module.id)
+    return render(request, 'learner_module_detail.html', {'components': components, 'module': module})
 @csrf_protect
 def take_quiz(request):
     module = get_object_or_404(Module, title__startswith="Chapter 1")
