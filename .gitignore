@@ -1,5 +1,4 @@
 .idea/
-.gitignore
 *.pyc
 */.DS_store
 /db/*.sqlite3
