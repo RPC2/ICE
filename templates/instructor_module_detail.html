@@ -8,7 +8,9 @@
             <img src="{{component.image_content.url}}" style="height: 100px;width: 60px">
         </div>
         {% endfor %}
-    <a href="{% url 'instructors:instructor-add-component' moduleid=module.id %}">Add Component</a>
+        <a href="{% url 'instructors:instructor-add-component' moduleid=module.id %}"  style="display: block;">Add Component</a>
+        <a href="{% url 'instructors:instructor-add-quiz' moduleid=module.id %}" style="display: block;">Add Quiz</a>
+        <a href="{% url 'instructors:instructor-view-quiz' moduleid=module.id %}" style="display: block;">View Quiz</a>
     </div>
 </div>
 {% endblock %}
