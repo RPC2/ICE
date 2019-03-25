@@ -28,7 +28,9 @@ def add_module(request, courseid):
             #save module to DB
             instance = form.save(commit=False)
             course = Course.objects.get(id=courseid)
+            order = Module.objects.filter(Course = course).count() + 1
             instance.Course = course
+            instance.order = order
             instance.save()
             return redirect('instructors:instructor-modules', slug=course.slug)
     else:
