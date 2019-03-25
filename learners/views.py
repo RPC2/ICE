@@ -54,3 +54,4 @@ def view_result(request):
     return render(request, 'quiz_result.html', {'total_score': latest_submission.total_score,
                                                 'pass_or_fail': result})
 
+#abc
