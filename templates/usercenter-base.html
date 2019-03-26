@@ -59,12 +59,12 @@
 
 
 {#</section>#}
-    <div class="middle">
-        <div class="wp">
-            <img class="fl" src="{% static 'mooc.jpeg' %}"/>
+{#    <div class="middle">#}
+{#        <div class="wp">#}
+{#            <img class="fl" src="{% static 'mooc.jpeg' %}"/>#}
 {#            <h1>ICE</h1>#}
-        </div>
-    </div>
+{#        </div>#}
+{#    </div>#}
 {#			</div>#}
 {#    </header>#}
 
@@ -81,13 +81,10 @@
 {#        </div>#}
 {#    </section>#}
 {#{% endblock %}#}
-<section>
-	<div class="wp list personal_list">
-	<div class="left">
-        <ul>
-            <li style="list-style-type: none"><a href="{% url 'learners:active-course' %}">active course</a></li>
-        </ul>
-	</div>
+{#	<div class="wp list personal_list">#}
+{#	<div class="left">#}
+    <h1><a class="redirect_link" href="{% url 'learners:active-course' %}">active course</a></h1>
+{#	</div>#}
 
 {% block  right_content %}
 {% endblock %}
