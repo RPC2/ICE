@@ -1,0 +1,13 @@
+{% extends 'usercenter-base.html' %}
+{% block right_content%}
+    <div class="courses">
+    {% for course in courses %}
+        <div class="course">
+            <h2><a href="{% url 'learners:course_detail' slug=course.slug %}">{{ course.title }}</a></h2>
+            <img src="{{course.thumb.url}}" style="height: 100px;width: 60px">
+            <p>{{ course.snippet }}</p>
+            <p>{{ course.date }}</p>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}
