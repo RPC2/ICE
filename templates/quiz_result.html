@@ -1,3 +1,8 @@
 <h1>Your quiz result</h1>
 <p>Your score: {{total_score}}</p>
 <p>You {{pass_or_fail}}!</p>
+{% if pass_or_fail == 'passed' %}
+    <a class="redirect_link" href="{% url 'learners:module_detail' moduleid=next_module_id %}">Next Module</a>
+{% elif pass_or_fail == 'failed' %}
+    <a class="redirect_link" href="{% url 'learners:module_detail' moduleid=current_module_id %}">Go Back to Module</a>
+{% endif %}
