@@ -1,4 +1,5 @@
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
@@ -39,19 +40,27 @@ def take_quiz(request,module_id):
                 choice = QuizChoice.objects.get(choice_text=answer)
                 total += choice.value
                 QuizResult.objects.create(total_score=total)
-            return HttpResponseRedirect('/learner/view_result/')
+            # return HttpResponseRedirect('/learner/view_result/')
+            return redirect('learners:view_result', module_id=module_id)
     else:
         form = QuizForm(questions=question_list)
 
     return render(request, 'take_quiz.html', {'form': form})
 
 
-def view_result(request):
+def view_result(request, module_id):
+    module = Module.objects.get(id=module_id)
+    course_id = module.Course_id
+    current_order = module.order
+    next_module = Module.objects.get(Course_id=course_id, order = current_order+1)
+    next_module_id = next_module.id
     latest_submission = QuizResult.objects.get(pk=len(list(QuizResult.objects.all())))
     if latest_submission.total_score >= 10:
         result = "passed"
     else:
         result = 'failed'
     return render(request, 'quiz_result.html', {'total_score': latest_submission.total_score,
-                                                'pass_or_fail': result})
+                                                'pass_or_fail': result,
+                                                'current_module_id':module_id,
+                                                'next_module_id': next_module_id})
 
