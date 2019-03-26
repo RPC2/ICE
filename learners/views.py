@@ -37,7 +37,7 @@ def view_result(request):
         result = "passed"
     else:
         result = 'failed'
-    return render(request, 'quiz_result.html', {'total_score': latest_submission.total_score,
-                                                'pass_or_fail': result})
 
-#abc
+    return render(request, 'quiz_result.html', {'total_score': latest_submission.total_score,
+                                                'pass_or_fail': result,})
+
