@@ -6,7 +6,11 @@
     <h1>Catalog</h1>
         {% for module in modules %}
         <div class="modulelist">
-            <h2><a class="redirect_link" href="{% url 'learners:module_detail' moduleid=module.id %}">{{ module.title }}</a></h2>
+            {% if progress >= module.order %}
+                <a class="redirect_link" href="{% url 'learners:module_detail' moduleid=module.id %}">{{ module.title }}</a>
+            {% elif progress < module.order %}
+                <div class="redirect_link">{{ module.title }}</div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
