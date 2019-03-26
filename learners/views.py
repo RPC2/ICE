@@ -18,13 +18,15 @@ def active_course(request):
     activecourses = Course.objects.all()
     return render(request, 'usercenter-activecourse.html', {'courses': activecourses})
 def course_detail(request,slug):
+    progress = Progress.objects.get(id=1);
     course = Course.objects.get(slug=slug)
     modules = Module.objects.filter(Course_id=course.id)
-    return render(request, 'learner_course_detail.html', {'course': course, 'modules': modules})
+    return render(request, 'learner_course_detail.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
 def module_detail(request, moduleid):
     module = Module.objects.get(id=moduleid)
+    progress = Progress.objects.get(id=1);
     components = Component.objects.filter(Module_id=module.id)
-    return render(request, 'learner_module_detail.html', {'components': components, 'module': module})
+    return render(request, 'learner_module_detail.html', {'components': components, 'module': module, 'progress': progress.latest_progress})
 
 @csrf_protect
 def take_quiz(request,module_id):
@@ -49,6 +51,7 @@ def take_quiz(request,module_id):
 
 
 def view_result(request, module_id):
+    progress = Progress.objects.get(id = 1);
     module = Module.objects.get(id=module_id)
     course_id = module.Course_id
     current_order = module.order
@@ -57,6 +60,8 @@ def view_result(request, module_id):
     latest_submission = QuizResult.objects.get(pk=len(list(QuizResult.objects.all())))
     if latest_submission.total_score >= 10:
         result = "passed"
+        progress.latest_progress = progress.latest_progress+1
+        progress.save()
     else:
         result = 'failed'
     return render(request, 'quiz_result.html', {'total_score': latest_submission.total_score,
