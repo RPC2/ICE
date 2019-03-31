@@ -15,5 +15,6 @@
         <a class = "redirect_button" href= "{% url 'instructors:instructor-add-quiz' moduleid=module.id %}">Add Quiz</a>
         <a class = "redirect_button" href="{% url 'instructors:instructor-view-quiz' moduleid=module.id %}">View Quiz</a>
     </div>
+    <a class = "redirect_button" href="{% url "instructors:instructor-modules" slug="marketing" %}" style="display: block;">Back to Modules</a>
 </div>
 {% endblock %}
