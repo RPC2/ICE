@@ -16,8 +16,7 @@ class Course(models.Model):
     # progress = models.ManyToManyField(Learner, through='Progress')
 
     # one-to-many
-    test_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    test_time = 0
+    instructor_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.title

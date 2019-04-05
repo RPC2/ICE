@@ -11,7 +11,7 @@ from . import forms
 @login_required
 def instructor_course_list(request):
     current_user = request.user
-    courses = Course.objects.filter(test_user_id=current_user.id).order_by('date');
+    courses = Course.objects.filter(instructor_user_id=current_user.id).order_by('date');
     # courses = Course.objects.filter(instructor_id=1).order_by('date');
     return render(request, 'instructor_course_list.html', {'courses': courses})
 
