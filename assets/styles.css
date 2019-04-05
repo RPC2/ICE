@@ -1,76 +1,92 @@
-html{
+html {
     height: 100%;
     width: 100%;
 }
-body{
+
+body {
     /*background-color: #0f121f;*/
     background-image: url(/static/wallpaper.jpg);
     /*background-repeat-y: no-repeat;*/
     height: 100%;
 }
 
-body *{
+body * {
     font-family: Ubuntu;
 }
-.redirect_link{
+
+.redirect_link {
     text-decoration: none;
     color: black;
 }
-h1, h2, h3, h4, h5{
+
+h1, h2, h3, h4, h5 {
     font-weight: normal;
     margin-bottom: 10px;
 }
-h1{
+
+h1 {
     text-align: center;
 }
-a, a:hover, a:visited{
+
+a, a:hover, a:visited {
     text-decoration: none;
 }
 
-.wrapper{
+.wrapper {
     /*max-width: 960px;*/
     height: 100%;
     margin: 5%;
     background-color: white;
 }
 
-div.wrapper > h1{
+div.wrapper > h1 {
     text-align: center;
     margin: 100px auto;
     font-size: 2.4em
 }
 
-header{
+header {
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 20px 0;
 }
 
+.sidebar-nav {
+    margin-top: 20px;
+    padding: 0;
+    list-style: none;
+}
+
+.img-sized {
+    max-width: 100%;
+    max-height: 100%;
+}
+
 .redirect_button {
-  background-color: #00dba0; /* Green */
-  border: none;
-  color: white;
-  padding: 16px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  -webkit-transition-duration: 0.4s; /* Safari */
-  transition-duration: 0.4s;
-  cursor: pointer;
+    background-color: #00dba0; /* Green */
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
     width: 25%;
 }
 
 .redirect_button:hover {
-  background-color: white;
-  color: #4CAF50;
+    background-color: white;
+    color: #4CAF50;
 }
-.button_wrapper{
+
+.button_wrapper {
     position: relative;
     width: 100%;
 }
-
 
 .site-form {
     margin-top: 60px;
@@ -78,20 +94,20 @@ header{
     padding: 20px;
 }
 
-.site-form input, .site-form textarea{
+.site-form input, .site-form textarea {
     display: block;
     margin: 20px 0 0px 0;
     padding: 10px;
 }
 
-a.highlight{
+a.highlight {
     border: 1px solid #00dba0;
     padding: 10px;
     border-radius: 4px;
     color: #00dba0;
 }
 
-.errorlist li{
+.errorlist li {
     padding: 10px;
     list-style-type: none;
     border: 1px solid #FF5722;
@@ -99,11 +115,11 @@ a.highlight{
     color: #FF5722
 }
 
-.errorlist{
+.errorlist {
     padding: 0;
 }
 
-.site-form input[type="submit"]{
+.site-form input[type="submit"] {
     background: #00dba0;
     border: 0;
     color: #fff;
@@ -111,60 +127,70 @@ a.highlight{
     border-radius: 4px;
     margin: 10px 0;
 }
-.courses{
+
+.courses {
     position: relative;
     width: 90%;
     height: 100%;
     left: 10%;
 }
-.course{
+
+.course {
     position: relative;
     width: 100%;
     height: 40%;
 }
-.course_img{
+
+.course_img {
     display: inline-block;
     position: absolute;
     width: 25%;
     height: 100%;
 }
-.course_intro{
+
+.course_intro {
     display: inline-block;
     position: absolute;
     width: 50%;
     height: 90%;
-    left:30%;
+    left: 30%;
 }
-.course-detail{
+
+.course-detail {
     text-align: center;
 }
-.module-detail{
+
+.module-detail {
     position: relative;
-    width:100%;
+    width: 100%;
     height: 100%;
 }
-.components{
+
+.components {
     position: relative;
-    width:100%;
+    width: 100%;
     height: 100%;
     left: 10%;
 }
-.component{
+
+.component {
     margin-bottom: 5%;
     position: relative;
-    width:100%;
+    width: 100%;
     height: 30%;
 }
-.component_img{
+
+.component_img {
     display: inline-block;
     position: absolute;
     width: 25%;
     height: 100%;
 }
-.component_text{
+
+.component_text {
     display: inline-block;
     position: absolute;
     width: 50%;
     height: 90%;
-    left:30%;
+    left: 30%;
 }
