@@ -5,11 +5,10 @@ from django.contrib.auth.models import User
 
 
 class Instructor(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, null=True, blank=True)
+    # make a foreign key to Users table here
 
     username = models.CharField(max_length=100, blank=True)
-    # password = models.CharField(max_length=100, blank=True)
+    password = models.CharField(max_length=100, blank=True)
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)
     self_intro = models.CharField(max_length=100)
