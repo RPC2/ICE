@@ -21,11 +21,19 @@
             {% block sidebar %}
                 <ul class="sidebar-nav">
                     <li><a href="">Home</a></li>
-                    <li><a href="">My Courses</a></li>
-                    <li><a href="">Browse New Courses</a></li>
+                    <li><a href="">All Courses</a></li>
                     <br>
                     {% if user.is_authenticated %}
                         <li>User: {{ user.get_username }}</li>
+                        <li><a href="/instructor">My Courses</a></li>
+
+                        <li>My Profile</li>
+                        <ul>
+                            <li>Full name: {{ user.get_full_name }}</li>
+                            <li>Username: {{ user.username }}</li>
+{#                            <li>Location: {{ user.instructor.self_intro }}</li>#}
+{#                            <li>Birth Date: {{ user.instructor.email }}</li>#}
+                        </ul>
                         <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
                     {% else %}
                         <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
