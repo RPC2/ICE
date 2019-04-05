@@ -31,8 +31,8 @@ Email: gucci@hku.hk
 ## How Authentication works
 
 ### 以instructor为例：
-- 每次进入instructor page，一定会要求login
-- 输入login (user: `tester`, password: `testertester`)之后，只会显示属于你的courses，详见views.py的实现。
+- 每次进入[instructor page](http://127.0.0.1:8000/instructor/)，一定会要求login
+- 输入login (user: `tester`, password: `testertester`)之后，只会显示属于你的courses，详见[views.py](views.py)的实现。
 - 在database的实现是在下面的appendix里面，所以每个course里面，都同时记录了instructor的instructor_id和user_id，以user_id作为authentication的标准。
 
 ### 新user的建立：
