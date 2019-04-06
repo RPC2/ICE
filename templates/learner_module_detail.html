@@ -1,15 +1,18 @@
 {% extends 'base_layout.html' %}
 {% block content %}
 <div class="module-detail">
-    <div class="component">
-        {% for component in components %}
-        <div class="componentlist">
-{#            <p>{{ component.title }}</p>#}
-            <p>{{ component.text_content }}</p>
-            <img src="{{component.image_content.url}}" style="height: 100px;width: 60px">
-{#            <p>{{ component.date }}</p>#}
+    <h1>{{ module.title }}</h1>
+         <div class="components">
+             {% for component in components %}
+                <div class="component">
+                    <div class="component_text">{{ component.text_content }}</div>
+                    <img class="component_img" src="{{component.image_content.url}}">
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    {% if progress <= module.order %}
+        <a class = "redirect_button" href="{% url 'learners:take_quiz' module_id=module.id %}" style="display: block;">Take Quiz</a>
+    {% endif %}
+    <a class = "redirect_button" href="{% url 'learners:course_detail' slug="marketing" %}" style="display: block;">Back to Modules</a>
 </div>
 {% endblock %}

@@ -3,12 +3,13 @@
 {% block content %}
 <div class="course-detail">
     <div class="course">
+    <h1>Catalog</h1>
         {% for module in modules %}
         <div class="modulelist">
-            <h2><a href="{% url 'instructors:instructor-module-detail' moduleid=module.id %}">{{ module.title }}</a></h2>
+            <h2><a class="redirect_link" href="{% url 'instructors:instructor-module-detail' moduleid=module.id %}">{{ module.title }}</a></h2>
         </div>
         {% endfor %}
-    <a href="{% url 'instructors:instructor-add-module' courseid=course.id %}">Add Module</a>
+    <a class = "redirect_button" href="{% url 'instructors:instructor-add-module' courseid=course.id %}">Add Module</a>
     </div>
 </div>
 {% endblock %}

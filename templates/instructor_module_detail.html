@@ -1,16 +1,20 @@
 {% extends 'base_layout.html' %}
 {% block content %}
 <div class="module-detail">
-    <div class="component">
+    <h1>{{ module.title }}</h1>
+    <div class="components">
         {% for component in components %}
-        <div class="componentlist">
-            <p>{{ component.text_content }}</p>
-            <img src="{{component.image_content.url}}" style="height: 100px;width: 60px">
+        <div class="component">
+            <div class="component_text">{{ component.text_content }}</div>
+            <img class="component_img" src="{{component.image_content.url}}">
         </div>
         {% endfor %}
-        <a href="{% url 'instructors:instructor-add-component' moduleid=module.id %}"  style="display: block;">Add Component</a>
-        <a href="{% url 'instructors:instructor-add-quiz' moduleid=module.id %}" style="display: block;">Add Quiz</a>
-        <a href="{% url 'instructors:instructor-view-quiz' moduleid=module.id %}" style="display: block;">View Quiz</a>
     </div>
+    <div class="button_wrapper">
+        <a class = "redirect_button" href="{% url 'instructors:instructor-add-component' moduleid=module.id %}" >Add Component</a>
+        <a class = "redirect_button" href= "{% url 'instructors:instructor-add-quiz' moduleid=module.id %}">Add Quiz</a>
+        <a class = "redirect_button" href="{% url 'instructors:instructor-view-quiz' moduleid=module.id %}">View Quiz</a>
+    </div>
+    <a class = "redirect_button" href="{% url "instructors:instructor-modules" slug="marketing" %}" style="display: block;">Back to Modules</a>
 </div>
 {% endblock %}
