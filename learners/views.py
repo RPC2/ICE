@@ -29,6 +29,8 @@ def active_course(request, category):
     return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
 
 @login_required
+def course_detail(request,slug):
+    progress = Progress.objects.get(id=1)
 @user_passes_test(is_member)
 def modules(request,slug):
     progress = Progress.objects.get(id=1);
@@ -52,13 +54,20 @@ def module_detail(request, moduleid):
     return render(request, 'learner_module_detail.html', {'components': components, 'module': module, 'progress': progress.latest_progress})
 
 
+"""
 @login_required
 @user_passes_test(is_member)
 @csrf_protect
-def take_quiz(request,module_id):
-    # module = get_object_or_404(Module, title__startswith="Chapter 1")
-    module = Module.objects.get(id=module_id)
-    question_list = list(module.quizquestion_set.filter(selected=True))
+def take_quiz(request, course_title, username):
+    current_learner = Learner.objects.get(username=username)
+    current_course = Course.objects.get(title=course_title)
+    learner_progress = Progress.objects.get(learner=current_learner, course=current_course).latest_progress
+    current_module = current_course.module_set.get(id=learner_progress)
+    question_list = list(current_module.quizquestion_set.filter(selected=True))
+    is_last_module = False
+
+    if len(current_course.module_set.all()) == learner_progress: # Learner progress = number of modules in this course
+        is_last_module = True
 
     if request.method == 'POST':
         form = QuizForm(request.POST or None, questions=question_list)
@@ -67,8 +76,10 @@ def take_quiz(request,module_id):
             for (question_description, answer) in form.answers():
                 choice = QuizChoice.objects.get(choice_text=answer)
                 total += choice.value
-                QuizResult.objects.create(total_score=total)
-            # return HttpResponseRedirect('/learner/view_result/')
+                quiz_result = QuizResult.objects.get(learner=current_learner, course=current_course)
+                quiz_result.total_score = total
+                quiz_result.save()
+
             return redirect('learners:view_result', module_id=module_id)
     else:
         form = QuizForm(questions=question_list)
@@ -78,23 +89,35 @@ def take_quiz(request,module_id):
 
 @login_required
 @user_passes_test(is_member)
-def view_result(request, module_id):
-    progress = Progress.objects.get(id = 1);
-    module = Module.objects.get(id=module_id)
-    course_id = module.Course_id
-    current_order = module.order
+def view_result(request, course_title, username):
+    # Get learner, course, and progress
+    current_learner = Learner.objects.get(username=username)
+    current_course = Course.objects.get(title=course_title)
+    learner_progress = Progress.objects.get(learner=current_learner, course=current_course).latest_progress
+
+    # Get module info
+    current_module = current_course.module_set.get(id=learner_progress)
+    course_id = current_module.Course_id
+    current_order = current_module.order
     next_module = Module.objects.get(Course_id=course_id, order = current_order+1)
     next_module_id = next_module.id
-    latest_submission = QuizResult.objects.get(pk=len(list(QuizResult.objects.all())))
-    if latest_submission.total_score >= 10:
+
+    # Get quiz result (pass or fail)
+    latest_submission = QuizResult.objects.get(learner=current_learner, course=current_course)
+    if latest_submission.total_score >= 10: # TODO: How does instructor set the passing score?
         result = "passed"
-        progress.latest_progress = progress.latest_progress+1
-        progress.save()
+        learner_progress.latest_progress = learner_progress.latest_progress+1
+        learner_progress.save()
     else:
         result = 'failed'
+
+    # Is the learner passing the last module?
+    is_last_module = False
+    if len(current_course.module_set.all()) == learner_progress: # Learner progress = number of modules in this course
+        is_last_module = True
+
     return render(request, 'quiz_result.html', {'total_score': latest_submission.total_score,
                                                 'pass_or_fail': result,
-                                                'current_module_id':module_id,
-                                                'next_module_id': next_module_id})
-
-#abc
+                                                'current_module_id':current_module.id,
+                                                'next_module_id': next_module_id,
+                                                'is_last_module': is_last_module})"""
