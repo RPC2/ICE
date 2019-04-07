@@ -54,6 +54,7 @@ def module_detail(request, moduleid):
     return render(request, 'learner_module_detail.html', {'components': components, 'module': module, 'progress': progress.latest_progress})
 
 
+"""
 @login_required
 @user_passes_test(is_member)
 @csrf_protect
@@ -119,6 +120,4 @@ def view_result(request, course_title, username):
                                                 'pass_or_fail': result,
                                                 'current_module_id':current_module.id,
                                                 'next_module_id': next_module_id,
-                                                'is_last_module': is_last_module})
-
-#abc
+                                                'is_last_module': is_last_module})"""
