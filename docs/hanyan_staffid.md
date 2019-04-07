@@ -1,20 +1,22 @@
 ### Database structure
 Here are the list of tables:
 
-staff_info
+staff_info [prior knowledge]
 - staffID
 - email
-- fn
-- ln
+- firstname
+- lastname
 
-ice_account
-- staffID: foreign key
-- user_id: foreign key
+Example way to pass the staffID in: `url/base64encode?token=99`
 
-users
+users [created on the fly]
 - user_id
 - username
 - password
+
+ice_account [created on the fly]
+- staffID: foreign key
+- user_id: foreign key
 
 ### How to create tables 
 Check [how_to_change_db.md](how_to_change_db.md).
