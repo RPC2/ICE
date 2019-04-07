@@ -1,6 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 from instructors.models import Instructor
 from learners.models import Learner
+
+
 # Create your models here.
 class Course(models.Model):
     title = models.CharField(max_length=100)
@@ -14,6 +17,9 @@ class Course(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
 
     # progress = models.ManyToManyField(Learner, through='Progress')
+
+    # one-to-many
+    instructor_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -43,18 +49,20 @@ class Component(models.Model):
     def __str__(self):
         return self.title
 
+
 class Progress(models.Model):
-    learner=models.ForeignKey(Learner,on_delete=models.CASCADE)
-    course=models.ForeignKey(Course,on_delete=models.CASCADE)
+    learner = models.ForeignKey(Learner, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     latest_progress = models.IntegerField(default=1)
 
     def __str__(self):
         return self.learner.username + " at " + self.course.title
 
+
 class QuizQuestion(models.Model):
     question_text = models.CharField(max_length=200)
     module = models.ForeignKey(Module, on_delete=models.CASCADE, default=0)
-    selected = models.BooleanField(default = False)
+    selected = models.BooleanField(default=False)
 
     def __str__(self):
         return self.question_text
@@ -67,4 +75,3 @@ class QuizChoice(models.Model):
 
     def __str__(self):
         return self.choice_text
-

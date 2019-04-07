@@ -4,7 +4,7 @@ from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 from django.views import generic
-
+from django.contrib.auth.decorators import login_required
 
 from .models import *
 from courses.models import *
@@ -12,8 +12,11 @@ from courses.forms import *
 from learners.models import *
 
 
+@login_required
 def user_center(request):
     return render(request, 'usercenter-base.html')
+
+@login_required
 def active_course(request, category):
     categories = Course.objects.order_by().values_list('category', flat=True).distinct()
     if category == 'all':
@@ -21,23 +24,29 @@ def active_course(request, category):
     else:
         activecourses = Course.objects.filter(category=category)
     return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
+
+@login_required
 def modules(request,slug):
     progress = Progress.objects.get(id=1);
     course = Course.objects.get(slug=slug)
     modules = Module.objects.filter(Course_id=course.id)
     return render(request, 'learner_modules.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
 
+@login_required
 def course_detail(request, course_id):
     course = Course.objects.get(id=course_id)
     return render(request, 'learner_course_detail.html',
                   {'course': course} )
 
+@login_required
 def module_detail(request, moduleid):
     module = Module.objects.get(id=moduleid)
     progress = Progress.objects.get(id=1);
     components = Component.objects.filter(Module_id=module.id)
     return render(request, 'learner_module_detail.html', {'components': components, 'module': module, 'progress': progress.latest_progress})
 
+
+@login_required
 @csrf_protect
 def take_quiz(request,module_id):
     # module = get_object_or_404(Module, title__startswith="Chapter 1")
@@ -60,6 +69,7 @@ def take_quiz(request,module_id):
     return render(request, 'take_quiz.html', {'form': form})
 
 
+@login_required
 def view_result(request, module_id):
     progress = Progress.objects.get(id = 1);
     module = Module.objects.get(id=module_id)
@@ -79,3 +89,4 @@ def view_result(request, module_id):
                                                 'current_module_id':module_id,
                                                 'next_module_id': next_module_id})
 
+#abc

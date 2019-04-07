@@ -18,10 +18,6 @@ class createComponent(forms.ModelForm):
         model = models.Component
         fields = ['title', 'text_content', 'image_content']
 
-class createComponent(forms.ModelForm):
-    class Meta:
-        model = models.Component
-        fields = ['title', 'text_content', 'image_content']
 
 
 class createQuiz(forms.Form):
@@ -33,4 +29,3 @@ class createQuiz(forms.Form):
         super(createQuiz, self).__init__(*args, **kwargs)
         self.fields['questions'] = forms.MultipleChoiceField(choices=QUESTION_CHOICES, required=False,
                                                              widget=forms.CheckboxSelectMultiple())
-        # print(self.fields['questions'])
