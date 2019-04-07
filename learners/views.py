@@ -4,27 +4,22 @@ from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 from django.views import generic
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .models import *
 from courses.models import *
 from courses.forms import *
 from learners.models import *
-
+def is_member(user):
+    return user.groups.filter(name='learner').exists()
 
 @login_required
+@user_passes_test(is_member)
 def user_center(request):
     return render(request, 'usercenter-base.html')
 
 @login_required
-def course_detail(request,slug):
-    progress = Progress.objects.get(id=1);
-    course = Course.objects.get(slug=slug)
-    modules = Module.objects.filter(Course_id=course.id)
-    return render(request, 'learner_course_detail.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
-
-
-@login_required
+@user_passes_test(is_member)
 def active_course(request, category):
     categories = Course.objects.order_by().values_list('category', flat=True).distinct()
     if category == 'all':
@@ -34,6 +29,7 @@ def active_course(request, category):
     return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
 
 @login_required
+@user_passes_test(is_member)
 def modules(request,slug):
     progress = Progress.objects.get(id=1);
     course = Course.objects.get(slug=slug)
@@ -41,6 +37,7 @@ def modules(request,slug):
     return render(request, 'learner_modules.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
 
 @login_required
+@user_passes_test(is_member)
 def module_detail(request, moduleid):
     module = Module.objects.get(id=moduleid)
     progress = Progress.objects.get(id=1);
@@ -49,6 +46,7 @@ def module_detail(request, moduleid):
 
 
 @login_required
+@user_passes_test(is_member)
 @csrf_protect
 def take_quiz(request,module_id):
     # module = get_object_or_404(Module, title__startswith="Chapter 1")
@@ -72,6 +70,7 @@ def take_quiz(request,module_id):
 
 
 @login_required
+@user_passes_test(is_member)
 def view_result(request, module_id):
     progress = Progress.objects.get(id = 1);
     module = Module.objects.get(id=module_id)
