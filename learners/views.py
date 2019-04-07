@@ -38,6 +38,13 @@ def modules(request,slug):
 
 @login_required
 @user_passes_test(is_member)
+def course_detail(request, course_id):
+    course = Course.objects.get(id=course_id)
+    return render(request, 'learner_course_detail.html',
+                  {'course': course} )
+
+@login_required
+@user_passes_test(is_member)
 def module_detail(request, moduleid):
     module = Module.objects.get(id=moduleid)
     progress = Progress.objects.get(id=1);
