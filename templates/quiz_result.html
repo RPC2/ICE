@@ -10,7 +10,7 @@
 {% if pass_or_fail == 'passed' and is_last_module == False %}
     <a class="redirect_link" href="{% url 'learners:module_detail' moduleid=next_module_id %}">Next Module</a>
 {% elif pass_or_fail == 'passed' and is_last_module == True %}
-    <a class="redirect_link" href="{% url ' ' %}">Back to Homepage</a> # TODO: Check pipi's implementation for url
+    <a class="redirect_link" href="{% url ' ' %}">Back to Homepage</a>
 
 {% elif pass_or_fail == 'failed' %}
     <a class="redirect_link" href="{% url 'learners:module_detail' moduleid=current_module_id %}">Go Back to Module</a>

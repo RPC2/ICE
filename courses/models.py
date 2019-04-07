@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from instructors.models import Instructor
 from learners.models import Learner
+import datetime
 
 
 # Create your models here.
@@ -75,3 +76,25 @@ class QuizChoice(models.Model):
 
     def __str__(self):
         return self.choice_text
+
+
+class QuizResult(models.Model):
+    total_score = models.IntegerField(default=0)
+    learner = models.ForeignKey(Learner, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.learner.username + " scored " + str(self.total_score) + " in the latest quiz of "+self.course.title
+
+
+class EnrollmentHistory(models.Model):
+    completed = models.BooleanField(default=True)
+    date_completed = models.DateField("Date", default=datetime.date.today)
+    learner = models.ForeignKey(Learner, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.completed:
+            return self.learner.username + " completed " + self.course.title + " on " + str(self.date_completed)
+        else:
+            return self.learner.username + " is currently studying " + self.course.title
