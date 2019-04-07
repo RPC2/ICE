@@ -2,6 +2,12 @@ from django import forms
 from courses import models
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
+class createCourse(forms.ModelForm):
+    class Meta:
+        model = models.Course
+        fields = ['title', 'description', 'thumb', 'slug', 'category', 'CECU']
+
 class createModule(forms.ModelForm):
     class Meta:
         model = models.Module

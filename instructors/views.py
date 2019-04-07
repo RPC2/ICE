@@ -20,6 +20,20 @@ def instructor_components(request, moduleid):
     module = Module.objects.get(id=moduleid)
     components = Component.objects.filter(Module_id = module.id)
     return render(request, 'instructor_module_detail.html', {'components': components, 'module': module})
+
+def add_course(request):
+    if request.method == 'POST':
+        form = forms.createCourse(request.POST,request.FILES)
+        if form.is_valid():
+            #save course to DB
+            instance = form.save(commit=False)
+            instance.instructor_id = 1
+            instance.save()
+            return redirect('instructors:list')
+    else:
+        form = forms.createCourse()
+        return render(request, 'add_course.html', {'form':form})
+
 def add_module(request, courseid):
     if request.method == 'POST':
         form = forms.createModule(request.POST,request.FILES)

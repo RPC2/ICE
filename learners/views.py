@@ -14,14 +14,24 @@ from learners.models import *
 
 def user_center(request):
     return render(request, 'usercenter-base.html')
-def active_course(request):
-    activecourses = Course.objects.all()
-    return render(request, 'usercenter-activecourse.html', {'courses': activecourses})
-def course_detail(request,slug):
+def active_course(request, category):
+    categories = Course.objects.order_by().values_list('category', flat=True).distinct()
+    if category == 'all':
+        activecourses = Course.objects.all()
+    else:
+        activecourses = Course.objects.filter(category=category)
+    return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
+def modules(request,slug):
     progress = Progress.objects.get(id=1);
     course = Course.objects.get(slug=slug)
     modules = Module.objects.filter(Course_id=course.id)
-    return render(request, 'learner_course_detail.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
+    return render(request, 'learner_modules.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
+
+def course_detail(request, course_id):
+    course = Course.objects.get(id=course_id)
+    return render(request, 'learner_course_detail.html',
+                  {'course': course} )
+
 def module_detail(request, moduleid):
     module = Module.objects.get(id=moduleid)
     progress = Progress.objects.get(id=1);

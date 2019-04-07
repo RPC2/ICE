@@ -10,5 +10,6 @@
             <div class="course_intro"><h3>Course Introduction</h3> <br>{{ course.snippet }}</div>
         </div>
     {% endfor %}
+    <a class = "redirect_button" href="{% url 'instructors:instructor-add-course' %}" >Add Course</a>
     </div>
 {% endblock %}

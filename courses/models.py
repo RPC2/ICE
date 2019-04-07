@@ -4,12 +4,15 @@ from learners.models import Learner
 # Create your models here.
 class Course(models.Model):
     title = models.CharField(max_length=100)
+    category = models.CharField(max_length=100, default="renjie")
     slug = models.SlugField()
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     open_status = models.BooleanField(default=True)
     thumb = models.ImageField(default='default.png', blank=True)
+    CECU = models.IntegerField(default=1)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+
     # progress = models.ManyToManyField(Learner, through='Progress')
 
     def __str__(self):
