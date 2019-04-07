@@ -3,12 +3,14 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect
 from courses.models import Course, Module, Component, QuizQuestion, QuizChoice
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from . import forms
-
+def is_member(user):
+    return user.groups.filter(name='instructor').exists()
 
 @login_required
+@user_passes_test(is_member)
 def instructor_course_list(request):
     current_user = request.user
     courses = Course.objects.filter(instructor_user_id=current_user.id).order_by('date');
@@ -17,17 +19,21 @@ def instructor_course_list(request):
 
 
 @login_required
+@user_passes_test(is_member)
 def instructor_modules(request, slug):
     course = Course.objects.get(slug=slug)
     modules = Module.objects.filter(Course_id = course.id)
     return render(request, 'instructor_module_list.html', {'course': course, 'modules': modules})
 
 @login_required
+@user_passes_test(is_member)
 def instructor_components(request, moduleid):
     module = Module.objects.get(id=moduleid)
     components = Component.objects.filter(Module_id = module.id)
     return render(request, 'instructor_module_detail.html', {'components': components, 'module': module})
 
+@login_required
+@user_passes_test(is_member)
 def add_course(request):
     if request.method == 'POST':
         form = forms.createCourse(request.POST,request.FILES)
@@ -42,6 +48,7 @@ def add_course(request):
         return render(request, 'add_course.html', {'form':form})
 
 @login_required
+@user_passes_test(is_member)
 def add_module(request, courseid):
     if request.method == 'POST':
         form = forms.createModule(request.POST,request.FILES)
@@ -59,6 +66,7 @@ def add_module(request, courseid):
         return render(request, 'add_module.html', {'form':form, 'courseid':courseid})
 
 @login_required
+@user_passes_test(is_member)
 def add_component(request, moduleid):
     if request.method == 'POST':
         form = forms.createComponent(request.POST,request.FILES)
@@ -74,6 +82,7 @@ def add_component(request, moduleid):
         return render(request, 'add_component.html', {'form':form, 'moduleid':moduleid})
 
 @login_required
+@user_passes_test(is_member)
 def add_quiz(request, moduleid):
     if request.method == 'POST':
         form = forms.createQuiz(request.POST, moduleid= moduleid)
@@ -92,6 +101,7 @@ def add_quiz(request, moduleid):
 
 
 @login_required
+@user_passes_test(is_member)
 def instructor_view_quiz(request, moduleid):
     module = Module.objects.get(id=moduleid)
     questions = QuizQuestion.objects.filter(module_id=moduleid);
