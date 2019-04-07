@@ -16,13 +16,6 @@ from learners.models import *
 def user_center(request):
     return render(request, 'usercenter-base.html')
 
-
-@login_required
-def active_course(request):
-    activecourses = Course.objects.all()
-    return render(request, 'usercenter-activecourse.html', {'courses': activecourses})
-
-
 @login_required
 def course_detail(request,slug):
     progress = Progress.objects.get(id=1);
@@ -30,6 +23,22 @@ def course_detail(request,slug):
     modules = Module.objects.filter(Course_id=course.id)
     return render(request, 'learner_course_detail.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
 
+
+@login_required
+def active_course(request, category):
+    categories = Course.objects.order_by().values_list('category', flat=True).distinct()
+    if category == 'all':
+        activecourses = Course.objects.all()
+    else:
+        activecourses = Course.objects.filter(category=category)
+    return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
+
+@login_required
+def modules(request,slug):
+    progress = Progress.objects.get(id=1);
+    course = Course.objects.get(slug=slug)
+    modules = Module.objects.filter(Course_id=course.id)
+    return render(request, 'learner_modules.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
 
 @login_required
 def module_detail(request, moduleid):
