@@ -2,17 +2,9 @@
 
 {% block content %}
 <div class="course-detail">
-    <div class="course">
-    <h1>Catalog</h1>
-        {% for module in modules %}
-        <div class="modulelist">
-            {% if progress >= module.order %}
-                <a class="redirect_link" href="{% url 'learners:module_detail' moduleid=module.id %}">{{ module.title }}</a>
-            {% elif progress < module.order %}
-                <div class="redirect_link">{{ module.title }}</div>
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
+    <p>{{ course.title }}</p>
+    <p>{{ course.description }}</p>
+    <p>{{ course.CECU }}</p>
 </div>
+    <a class="redirect_button" href="{% url 'learners:active-course' category='all'%}">Course List</a>
 {% endblock %}
