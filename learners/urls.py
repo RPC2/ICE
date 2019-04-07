@@ -11,8 +11,9 @@ urlpatterns = [
     url(r'^activecourse/(?P<slug>[\w-]+)/$', views.modules, name="modules"),
     url(r'^activecourse/detail/(?P<course_id>[\w-]+)/$', views.course_detail, name="course_detail"),
     url(r'^activecourse/module/(?P<moduleid>[\w-]+)/$', views.module_detail, name="module_detail"),
-    url(r'^take_quiz/(?P<course_title>[\w-]+)/(?P<username>[\w-]+)$', views.take_quiz, name='take_quiz'),
-    url(r'^view_result/(?P<course_title>[\w-]+)/(?P<username>[\w-]+)$', views.view_result, name='view_result'),
 
 
 ]
+
+"""url(r'^take_quiz/(?P<course_title>[\w-]+)/(?P<username>[\w-]+)$', views.take_quiz, name='take_quiz'),
+    url(r'^view_result/(?P<course_title>[\w-]+)/(?P<username>[\w-]+)$', views.view_result, name='view_result'),"""
