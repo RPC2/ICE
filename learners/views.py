@@ -5,11 +5,20 @@ from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required, user_passes_test
-
+from django.template.loader import render_to_string
+from .forms import *
 from .models import *
 from courses.models import *
 from courses.forms import *
 from learners.models import *
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.encoding import force_text,force_bytes
+from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
+from .tokens import account_activation_token
+from django.contrib.sites.shortcuts import get_current_site
+import urllib.request
+import json
 def is_member(user):
     return user.groups.filter(name='learner').exists()
 
@@ -18,7 +27,11 @@ def send_email(request):
         form = SendEmailForm(request.POST)
         if form.is_valid():
             staff_id = form.cleaned_data.get('staff_id')
-            email=Learner.objects.filter(staff_id=staff_id)
+            url="https://gibice-hrserver.herokuapp.com/info/"+staff_id
+            req = urllib.request.Request(url)
+            r = urllib.request.urlopen(req).read()
+            cont = json.loads(r.decode('utf-8'))
+            email=cont['email']
             message = render_to_string('learner_account_activation_email.html', {
                 'domain': get_current_site(request).domain,
                 'uid': urlsafe_base64_encode(force_bytes(staff_id)).decode(),
@@ -28,7 +41,7 @@ def send_email(request):
                 'Activate your account',
                 message,
                 settings.EMAIL_HOST_USER,
-                ['wa201801@163.com'],
+                [email],
             )
             return redirect('learners:waitforactivation')
     else:
