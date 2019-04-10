@@ -88,7 +88,7 @@ class QuizResult(models.Model):
 
 
 class EnrollmentHistory(models.Model):
-    completed = models.BooleanField(default=True)
+    completed = models.BooleanField(default=False)
     date_completed = models.DateField("Date", default=datetime.date.today)
     learner = models.ForeignKey(Learner, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
