@@ -5,8 +5,10 @@ from . import views
 app_name = 'learners'
 
 urlpatterns = [
-
-    url(r'^$', views.user_center, name="usercenter"),
+    url(r'^$', views.send_email, name="send_email"),
+    url(r'^waitforactivation$', views.waitforactivation, name="waitforactivation"),
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.activate, name='activate'),
     url(r'^activecourse/(?P<category>[\w-]+)/$', views.active_course, name="active-course"),
     url(r'^activecourse/(?P<slug>[\w-]+)/$', views.modules, name="modules"),
     url(r'^activecourse/detail/(?P<course_id>[\w-]+)/$', views.course_detail, name="course_detail"),

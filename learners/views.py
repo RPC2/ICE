@@ -13,6 +13,33 @@ from learners.models import *
 def is_member(user):
     return user.groups.filter(name='learner').exists()
 
+def send_email(request):
+    if request.method == 'POST':
+        form = SendEmailForm(request.POST)
+        if form.is_valid():
+            staff_id = form.cleaned_data.get('staff_id')
+            email=Learner.objects.filter(staff_id=staff_id)
+            message = render_to_string('learner_account_activation_email.html', {
+                'domain': get_current_site(request).domain,
+                'uid': urlsafe_base64_encode(force_bytes(staff_id)).decode(),
+                'token': account_activation_token.make_token(staff_id),
+            })
+            send_mail(
+                'Activate your account',
+                message,
+                settings.EMAIL_HOST_USER,
+                ['wa201801@163.com'],
+            )
+            return redirect('learners:waitforactivation')
+    else:
+        form =SendEmailForm()
+    return render(request, 'learner_signup.html', {'form': form})
+
+def waitforactivation(request):
+    return render(request,'waitforactivation.html')
+
+def activate(request, uidb64, token):
+    return render(request,'learner_activate.html')
 @login_required
 @user_passes_test(is_member)
 def user_center(request):
