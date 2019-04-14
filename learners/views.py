@@ -69,7 +69,8 @@ def activate(request, uidb64, token):
             password = form.cleaned_data.get('password')
             user=User.objects.create_user(username=username,password=password,first_name=first_name,last_name=last_name,
                                      email=email)
-            learner=Learner.objects.create(staff_id=staff_id)
+            learner=Learner.objects.create(username=username,password=password,first_name=first_name,last_name=last_name,
+                                     email=email,staff_id=staff_id)
             my_group = Group.objects.get(name='learner')
             my_group.user_set.add(user)
             return redirect('learners:activate_complete')
