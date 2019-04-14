@@ -7,12 +7,81 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 
+from django.template.loader import render_to_string
+from .forms import *
 from .models import *
 from courses.models import *
 from courses.forms import *
 from learners.models import *
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.encoding import force_text,force_bytes
+from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
+from .tokens import account_activation_token
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.models import User,Group
+import urllib.request
+import json
 def is_member(user):
     return user.groups.filter(name='learner').exists()
+staff_id= "00003297"
+first_name= "Sid"
+last_name= "Miglani"
+email= "sidhrmiglani@gmail.com"
+def send_email(request):
+    if request.method == 'POST':
+        form = SendEmailForm(request.POST)
+        if form.is_valid():
+            global staff_id
+            global first_name
+            global last_name
+            global email
+            staff_id = form.cleaned_data.get('staff_id')
+            url="https://gibice-hrserver.herokuapp.com/info/"+staff_id
+            req = urllib.request.Request(url)
+            r = urllib.request.urlopen(req).read()
+            cont = json.loads(r.decode('utf-8'))
+            first_name=cont['first_name']
+            last_name = cont['last_name']
+            email=cont['email']
+            message = render_to_string('learner_account_activation_email.html', {
+                'domain': get_current_site(request).domain,
+                'uid': urlsafe_base64_encode(force_bytes(staff_id)).decode(),
+                'token': account_activation_token.make_token(staff_id),
+            })
+            send_mail(
+                'Activate your account',
+                message,
+                settings.EMAIL_HOST_USER,
+                [email],
+            )
+            return redirect('learners:waitforactivation')
+    else:
+        form =SendEmailForm()
+    return render(request, 'learner_signup.html', {'form': form})
+
+def waitforactivation(request):
+    return render(request,'waitforactivation.html')
+
+def activate(request, uidb64, token):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user=User.objects.create_user(username=username,password=password,first_name=first_name,last_name=last_name,
+                                     email=email)
+            learner=Learner.objects.create(username=username,password=password,first_name=first_name,last_name=last_name,
+                                     email=email,staff_id=staff_id)
+            my_group = Group.objects.get(name='learner')
+            my_group.user_set.add(user)
+            return redirect('learners:activate_complete')
+    else:
+        form = SignupForm()
+    return render(request, 'learner_activate.html', {'form': form})
+
+def activate_complete(request):
+    return render(request, 'learner_activate_complete.html')
 
 @login_required
 @user_passes_test(is_member)
