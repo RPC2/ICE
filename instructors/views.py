@@ -6,8 +6,53 @@ from courses.models import Course, Module, Component, QuizQuestion, QuizChoice
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from . import forms
+
 def is_member(user):
     return user.groups.filter(name='instructor').exists()
+
+def send_email(request):
+    global instructor_email = 'loganwanghk@gmail.com'
+
+    message = render_to_string('instructor_account_activation_email.html', {
+        'domain': get_current_site(request).domain,
+        'uid': urlsafe_base64_encode(force_bytes(instructor_email)).decode(),
+        'token': account_activation_token.make_token(instructor_email),
+    })
+
+    send_mail(
+        'Activate your account',
+        message,
+        settings.EMAIL_HOST_USER,
+        [instructor_email],
+    )
+
+    return redirect('learners:waitforactivation')
+
+def waitforactivation(request):
+    return render(request,'waitforactivation.html')
+
+def activate(request, uidb64, token):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            autobiography = form.cleaned_data.get('autobiography')
+            user=User.objects.create_user(username=username,password=password,first_name=first_name,last_name=last_name,
+                                     email=email)
+            instructor = Instructor.objects.create(username = username)
+            my_group = Group.objects.get(name='instructor')
+            my_group.user_set.add(user)
+            return redirect('instructor:activate_complete')
+    else:
+        form = SignupForm()
+    return render(request, 'instructor_activate.html', {'form': form})
+
+def activate_complete(request):
+    return render(request, 'instructor_activate_complete.html')
+
 
 @login_required
 @user_passes_test(is_member)
