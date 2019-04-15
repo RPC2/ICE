@@ -81,8 +81,8 @@ def instructor_course_list(request):
 
 @login_required
 @user_passes_test(is_member)
-def instructor_modules(request, slug):
-    course = Course.objects.get(slug=slug)
+def instructor_modules(request, course_id):
+    course = Course.objects.get(id=course_id)
     modules = Module.objects.filter(Course_id = course.id)
     return render(request, 'instructor_module_list.html', {'course': course, 'modules': modules})
 
@@ -122,7 +122,7 @@ def add_module(request, courseid):
             instance.Course = course
             instance.order = order
             instance.save()
-            return redirect('instructors:instructor-modules', slug=course.slug)
+            return redirect('instructors:instructor-modules', course_id=course.id)
     else:
         form = forms.createModule()
         return render(request, 'add_module.html', {'form':form, 'courseid':courseid})
@@ -130,17 +130,20 @@ def add_module(request, courseid):
 @login_required
 @user_passes_test(is_member)
 def add_component(request, moduleid):
+    module = Module.objects.get(id = moduleid)
+    course_id = module.Course_id
     if request.method == 'POST':
-        form = forms.createComponent(request.POST,request.FILES)
+        form = forms.addComponent(request.POST,request.FILES, courseid=course_id)
         if form.is_valid():
             #save component to DB
-            instance = form.save(commit=False)
-            module = Module.objects.get(id=moduleid)
-            instance.Module = module
-            instance.save()
+            componentids = form.cleaned_data.get('components')
+            for id in componentids:
+                component = Component.objects.get(id=id)
+                component.Module_id =moduleid
+                component.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
-        form = forms.createComponent()
+        form = forms.addComponent(courseid=course_id)
         return render(request, 'add_component.html', {'form':form, 'moduleid':moduleid})
 
 @login_required
@@ -151,11 +154,14 @@ def add_quiz(request, moduleid):
         if form.is_valid():
             #switch selected to True
             questionids = form.cleaned_data.get('questions')
+            pass_score = form.cleaned_data.get('pass_score')
             for id in questionids:
                 question = QuizQuestion.objects.get(id=id)
                 question.selected = True
                 question.save()
             module = Module.objects.get(id=moduleid)
+            module.pass_score = pass_score
+            module.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
         form = forms.createQuiz(moduleid= moduleid)

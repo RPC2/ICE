@@ -1,3 +1,4 @@
+
 <style>
     ul
     {
@@ -11,7 +12,7 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form method="POST" action=".">
+<form method="POST" action="{% url 'learners:view_result' course_id=course_id username=username %}">
 {% csrf_token %}
     {{ form }}
   <input type=submit>

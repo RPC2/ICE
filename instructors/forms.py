@@ -16,19 +16,23 @@ class SignupForm(forms.Form):
 class createCourse(forms.ModelForm):
     class Meta:
         model = models.Course
-        fields = ['title', 'description', 'thumb', 'slug', 'category', 'CECU']
+        fields = ['title', 'description', 'thumb', 'slug', 'category', 'CECU', 'category']
 
 class createModule(forms.ModelForm):
     class Meta:
         model = models.Module
         fields = ['title']
 
-class createComponent(forms.ModelForm):
-    class Meta:
-        model = models.Component
-        fields = ['title', 'text_content', 'image_content']
 
-
+class addComponent(forms.Form):
+    def __init__(self, *args, **kwargs):
+        # print(kwargs)
+        self.courseid = kwargs.pop('courseid')
+        # QUESTION_CHOICES = models.QuizQuestion.objects.filter(module_id=self.moduleid)
+        COMPONENT_CHOICES = [[x.id, x.title] for x in models.Component.objects.filter(Course_id=self.courseid) if x.Module_id== None ]
+        super(addComponent, self).__init__(*args, **kwargs)
+        self.fields['components'] = forms.MultipleChoiceField(choices=COMPONENT_CHOICES, required=False,
+                                                             widget=forms.CheckboxSelectMultiple())
 
 class createQuiz(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -39,3 +43,4 @@ class createQuiz(forms.Form):
         super(createQuiz, self).__init__(*args, **kwargs)
         self.fields['questions'] = forms.MultipleChoiceField(choices=QUESTION_CHOICES, required=False,
                                                              widget=forms.CheckboxSelectMultiple())
+        self.fields['pass_score'] = forms.IntegerField(min_value=0, max_value=100)
