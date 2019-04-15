@@ -7,8 +7,8 @@ app_name = 'learners'
 urlpatterns = [
 
     url(r'^$', views.user_center, name="usercenter"),
-    url(r'^activecourse/(?P<category>[\w-]+)/$', views.active_course, name="active-course"),
-    url(r'^activecourse/(?P<slug>[\w-]+)/$', views.modules, name="modules"),
+    url(r'^activecourse/category/(?P<category>[\w ]+)/$', views.active_course, name="active-course"),
+    url(r'^activecourse/(?P<course_id>[\w-]+)/$', views.modules, name="modules"),
     url(r'^activecourse/detail/(?P<course_id>[\w-]+)/$', views.course_detail, name="course_detail"),
     url(r'^activecourse/module/(?P<moduleid>[\w-]+)/$', views.module_detail, name="module_detail"),
 

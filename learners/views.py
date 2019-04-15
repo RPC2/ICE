@@ -21,7 +21,7 @@ def user_center(request):
 @login_required
 @user_passes_test(is_member)
 def active_course(request, category):
-    categories = Course.objects.order_by().values_list('category', flat=True).distinct()
+    categories = Category.objects.all()
     if category == 'all':
         activecourses = Course.objects.all()
     else:
@@ -29,21 +29,15 @@ def active_course(request, category):
     return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
 
 @login_required
-def course_detail(request,slug):
-    progress = Progress.objects.get(id=1)
+def course_detail(request,course_id):
+    course = Course.objects.get(id=course_id)
+    return render(request, 'learner_course_detail.html', {'course': course})
+
 @user_passes_test(is_member)
-def modules(request,slug):
-    progress = Progress.objects.get(id=1);
-    course = Course.objects.get(slug=slug)
+def modules(request,course_id):
+    course = Course.objects.get(id=course_id)
     modules = Module.objects.filter(Course_id=course.id)
     return render(request, 'learner_modules.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
-
-@login_required
-@user_passes_test(is_member)
-def course_detail(request, course_id):
-    course = Course.objects.get(id=course_id)
-    return render(request, 'learner_course_detail.html',
-                  {'course': course} )
 
 @login_required
 @user_passes_test(is_member)
