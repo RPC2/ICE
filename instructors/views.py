@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.loader import render_to_string
 from .forms import *
+from instructors.models import *
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.encoding import force_text,force_bytes
@@ -16,9 +17,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.models import User,Group
 import urllib.request
 
-
-
-
+instructor_email = 'loganwanghk@gmail.com'
 
 def is_member(user):
     return user.groups.filter(name='instructor').exists()
@@ -58,11 +57,11 @@ def activate(request, uidb64, token):
             last_name = form.cleaned_data.get('last_name')
             autobiography = form.cleaned_data.get('autobiography')
             user=User.objects.create_user(username=username,password=password,first_name=first_name,last_name=last_name,
-                                     email=email)
+                                     email = instructor_email)
             instructor = Instructor.objects.create(username = username)
             my_group = Group.objects.get(name='instructor')
             my_group.user_set.add(user)
-            return redirect('instructor:activate_complete')
+            return redirect('instructors:activate_complete')
     else:
         form = SignupForm()
     return render(request, 'instructor_activate.html', {'form': form})

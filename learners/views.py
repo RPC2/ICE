@@ -20,6 +20,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.models import User,Group
 import urllib.request
 import json
+
 def is_member(user):
     return user.groups.filter(name='learner').exists()
 staff_id= "00003297"
@@ -44,7 +45,7 @@ def send_email(request):
             email=cont['email']
             message = render_to_string('learner_account_activation_email.html', {
                 'domain': get_current_site(request).domain,
-                'uid': urlsafe_base64_encode(force_bytes(staff_id)).decode(),
+                'uid': urlsafe_base64_encode(force_bytes(staff_id)),
                 'token': account_activation_token.make_token(staff_id),
             })
             send_mail(
