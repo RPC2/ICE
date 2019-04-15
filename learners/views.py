@@ -22,6 +22,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.models import User,Group
 import urllib.request
 import json
+
+
 def is_member(user):
     return user.groups.filter(name='learner').exists()
 staff_id= "00003297"
@@ -46,7 +48,7 @@ def send_email(request):
             email=cont['email']
             message = render_to_string('learner_account_activation_email.html', {
                 'domain': get_current_site(request).domain,
-                'uid': urlsafe_base64_encode(force_bytes(staff_id)).decode(),
+                'uid': urlsafe_base64_encode(force_bytes(staff_id)),
                 'token': account_activation_token.make_token(staff_id),
             })
             send_mail(
@@ -115,9 +117,9 @@ def course_detail(request, course_id):
 
 @login_required
 @user_passes_test(is_member)
-def module_detail(request, moduleid):
+def module_detail(request, moduleid): # TODO: Connect with a better URL
     module = Module.objects.get(id=moduleid)
-    progress = Progress.objects.get(id=1);
+    progress = Progress.objects.get(id=1)
     components = Component.objects.filter(Module_id=module.id)
     return render(request, 'learner_module_detail.html', {'components': components, 'module': module, 'progress': progress.latest_progress})
 
@@ -169,7 +171,9 @@ def view_result(request, course_id, username):
     learner_progress = Progress.objects.get(learner=current_learner, course=current_course)
 
     # Get module info
-    current_module = current_course.module_set.get(id=learner_progress.latest_progress)
+    print(current_course.module_set.all)
+    current_module = current_course.module_set.filter(order=learner_progress.latest_progress)[0]
+
     # print(current_module.title)
     current_order = current_module.order
 
@@ -208,12 +212,14 @@ def update_learner_history(username, course_id, time):
     current_course = Course.objects.get(id=course_id)
     learner_history = EnrollmentHistory.objects.get(learner=current_learner, course=current_course)
     learner_history.date_completed = time
+    learner_history.completed = True
+    learner_history.save()
 
 
 def view_completed_course(request, username):
     current_learner = Learner.objects.get(username=username)
     course_taken = []
-    learner_history = EnrollmentHistory.objects.filter(learner=current_learner)
+    learner_history = EnrollmentHistory.objects.filter(learner=current_learner, completed=True)
     for i in range(len(learner_history)):
         course_taken.append(learner_history[i].course)
     # print(course_taken)
