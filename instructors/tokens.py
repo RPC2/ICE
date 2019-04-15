@@ -5,7 +5,7 @@ class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, instructor_email, timestamp):
 
         return (
-            six.text_type(instructor_email.split("@")[0].replace(".","")) + six.text_type(timestamp)
+            six.text_type(instructor_email) + six.text_type(timestamp)
         )
 
 account_activation_token = AccountActivationTokenGenerator()

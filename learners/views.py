@@ -52,7 +52,7 @@ def send_email(request):
                 'Activate your account',
                 message,
                 settings.EMAIL_HOST_USER,
-                [email],
+                ['loganwanghk@gmail.com'],
             )
             return redirect('learners:waitforactivation')
     else:
