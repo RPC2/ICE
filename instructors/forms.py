@@ -2,6 +2,16 @@ from django import forms
 from courses import models
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+class SendEmailForm(forms.Form):
+    instructor_email = forms.CharField(max_length=50, help_text='Please input instructor email here.')
+
+class SignupForm(forms.Form):
+    username= forms.CharField(max_length=30,help_text='Required. Please input your username.')
+    password = forms.CharField(max_length=30, help_text='Required. Inform input your password.')
+    first_name = forms.CharField(max_length = 30, help_text = 'Required. Please input your first name')
+    last_name = forms.CharField(max_length = 30, help_text = 'Required. Please input your last name')
+    autobiography = forms.CharField(max_length = 2000, help_text = 'Required. Please input a short autobiography (2000 characters)')
+
 
 class createCourse(forms.ModelForm):
     class Meta:
