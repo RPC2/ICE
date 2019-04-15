@@ -5,28 +5,45 @@ from django.shortcuts import render, redirect
 from courses.models import Course, Module, Component, QuizQuestion, QuizChoice
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
-from . import forms
+from django.template.loader import render_to_string
+from .forms import *
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.encoding import force_text,force_bytes
+from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
+from .tokens import account_activation_token
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.models import User,Group
+import urllib.request
+
+
+
+
 
 def is_member(user):
     return user.groups.filter(name='instructor').exists()
 
 def send_email(request):
-    global instructor_email = 'loganwanghk@gmail.com'
-
-    message = render_to_string('instructor_account_activation_email.html', {
-        'domain': get_current_site(request).domain,
-        'uid': urlsafe_base64_encode(force_bytes(instructor_email)).decode(),
-        'token': account_activation_token.make_token(instructor_email),
-    })
-
-    send_mail(
-        'Activate your account',
-        message,
-        settings.EMAIL_HOST_USER,
-        [instructor_email],
-    )
-
-    return redirect('learners:waitforactivation')
+    if request.method == 'POST':
+        form = SendEmailForm(request.POST)
+        if form.is_valid():
+            global instructor_email
+            instructor_email = form.cleaned_data.get('instructor_email')
+            message = render_to_string('instructor_account_activation_email.html', {
+                'domain': get_current_site(request).domain,
+                'uid': urlsafe_base64_encode(force_bytes(instructor_email)),
+                'token': account_activation_token.make_token(instructor_email),
+            })
+            send_mail(
+                'Activate your account',
+                message,
+                settings.EMAIL_HOST_USER,
+                [instructor_email],
+            )
+            return redirect('instructors:waitforactivation')
+    else:
+        form =SendEmailForm()
+    return render(request, 'instructor_signup.html', {'form': form})
 
 def waitforactivation(request):
     return render(request,'waitforactivation.html')

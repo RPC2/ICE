@@ -5,6 +5,7 @@ app_name = 'instructors'
 
 urlpatterns = [
     url(r'^$', views.instructor_course_list, name="list"),
+    url(r'^signup$', views.send_email, name ="send_email"),
     url(r'^waitforactivation$', views.waitforactivation, name="waitforactivation"),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
