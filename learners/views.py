@@ -23,10 +23,6 @@ from django.contrib.auth.models import User,Group
 import urllib.request
 import json
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 48d2eadf579814b877f0cd42dd80f2ea51bb4c45
 def is_member(user):
     return user.groups.filter(name='learner').exists()
 staff_id= "00003297"
@@ -58,7 +54,7 @@ def send_email(request):
                 'Activate your account',
                 message,
                 settings.EMAIL_HOST_USER,
-                ['loganwanghk@gmail.com'],
+                [email],
             )
             return redirect('learners:waitforactivation')
     else:
@@ -229,4 +225,3 @@ def view_completed_course(request, username):
         course_taken.append(learner_history[i].course)
     # print(course_taken)
     return render(request, 'completed_course.html', {'courses': course_taken})
-
