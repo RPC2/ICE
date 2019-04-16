@@ -12,6 +12,35 @@
             max-width: 100%;
             max-height: 100%;
         }
+
+        :root {
+            --mainColor: #91D8FE;
+        }
+        .redirect_link {
+            background:
+                linear-gradient(
+                    to right,
+                    var(--mainColor) 0%,
+                    var(--mainColor) 5px,
+                    transparent 5px
+                );
+            background-repeat: repeat-x;
+            background-size: 100%;
+            color: darkblue;
+            padding-left: 10px;
+            text-decoration: none;
+        }
+
+        .redirect_link:hover {
+            background:
+                linear-gradient(
+                    to right,
+                var(--mainColor) 0%,
+                var(--mainColor) 5px,
+                transparent
+                );
+        }
+
     </style>
 </head>
 <body>
@@ -20,11 +49,11 @@
         <div class="col-sm-2">
             {% block sidebar %}
                 <ul class="sidebar-nav">
-                    <li><a href="">Home</a></li>
-                    <li><a href="">All Courses</a></li>
+                    <li><a class="redirect_link" href="{% url 'learners:active-course' category='all'%}">Home</a></li>
+                    <li><a class="redirect_link" href="{% url 'learners:active-course' category='all'%}">All Courses</a></li>
                     <br>
                     {% if user.is_authenticated %}
-                        <li><a href="/instructor">My Courses</a></li>
+                        <li><a class="redirect_link" href="{% url 'learners:completed_course'%}">Completed Courses</a></li>
 
                         <li>My Profile</li>
                         <ul>

@@ -4,19 +4,32 @@
     {% for category in categories %}
         <a class = "redirect_button" href="{% url 'learners:active-course' category=category.id %}" >{{ category }}</a>
     {% endfor %}
-    {% for course in courses %}
-            <h2><a class="redirect_link" href="{% url 'learners:modules' course_id=course.id %}">{{ course.title }}</a></h2>
+
+    {% for course_status in course_and_status %}
+            <h2><a class="redirect_link" href="{% url 'learners:modules' course_id=course_status.0.id %}">
+                {{ course_status.0.title}}</a></h2>
             <div class="row">
                 <div class="col-sm-3">
-                    <img class="img-sized"src="{{course.thumb.url}}">
+                    <img class="img-sized"src="{{course_status.0.thumb.url}}">
                 </div>
                 <div class="col-sm-8" class="course_intro">
                     <h3>Course Introduction</h3>
-                    <br>{{ course.snippet }}
+                    <br>{{ course_status.0.snippet }}
                     <br>
-                    <a class="redirect_button" href="{% url 'learners:course_detail' course_id=course.id %}">Course Detail</a>
+                    <a class="redirect_button" href="{% url 'learners:modules' course_id=course_status.0.id %}">Enter Course</a>
+                    <a class="redirect_button" href="{% url 'learners:course_detail' course_id=course_status.0.id %}">Course Detail</a>
+
+                    {% if course_status.1 == "Enrolled"%}
+                        <a class="redirect_button" >Enrolled</a>
+                    {% elif course_status.1 == "Completed"%}
+                        <a class="redirect_button" >Completed</a>
+                    {% elif course_status.1 == "Enroll"%}
+                        <a class="redirect_button" href="{% url 'learners:enroll_course' course_id=course_status.0.id %}">Enroll</a>
+                    {% endif %}
+
                 </div>
             </div>
+            <br>
     {% endfor %}
     </div>
 {% endblock %}

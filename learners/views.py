@@ -87,17 +87,56 @@ def activate_complete(request):
 @login_required
 @user_passes_test(is_member)
 def user_center(request):
-    return render(request, 'usercenter-base.html')
+    return redirect('learners:active-course', category='all')
 
 @login_required
 @user_passes_test(is_member)
 def active_course(request, category):
+    learner = Learner.objects.get(username=request.user.username)
+    learner_history = EnrollmentHistory.objects.filter(learner=learner)
     categories = Category.objects.all()
     if category == 'all':
-        activecourses = Course.objects.all()
+        active_courses = Course.objects.all()
     else:
-        activecourses = Course.objects.filter(category=category)
-    return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
+        active_courses = Course.objects.filter(category=category)
+
+    course_and_status = []
+    for course in active_courses:
+        has_history = False
+        status = ""
+        for history in learner_history:
+            if course == history.course and history.completed is True:
+                status = "Completed"
+                has_history = True
+            elif course == history.course and history.completed is False:
+                status = "Enrolled"
+                has_history = True
+
+        if has_history is False:
+            status = "Enroll"
+        course_and_status.append((course, status))
+    print(course_and_status)
+
+    return render(request, 'usercenter-activecourse.html', {'course_and_status': course_and_status,
+                                                            'categories': categories
+                                                            })
+
+@login_required
+@user_passes_test(is_member)
+def enroll_course(request, course_id):
+    learner = Learner.objects.get(username=request.user.username)
+    course = Course.objects.get(id=course_id)
+    history = EnrollmentHistory.objects.create(learner=learner, course=course, completed=False)
+    history.save()
+    progress = Progress.objects.create(learner=learner, course=course, latest_progress=1)
+    progress.save()
+    quiz_result = QuizResult.objects.create(learner=learner, course=course, total_score=0)
+    quiz_result.save()
+
+    return render(request, 'learner_modules.html', {'course': course, 'modules': modules,
+                                                    'progress': progress.latest_progress})
+
+
 
 @login_required
 def course_detail(request,course_id):
@@ -119,52 +158,49 @@ def modules(request,course_id):
 def module_detail(request, moduleid): # TODO: Connect with a better URL
     username = request.user.username
     module = Module.objects.get(id=moduleid)
-    course =  module.Course
+    course = module.Course
     progress = Progress.objects.get(learner__username=username, course=course)
     components = Component.objects.filter(Module_id=module.id)
     return render(request, 'learner_module_detail.html', {'components': components,'username':username, 'module': module, 'progress': progress.latest_progress})
 
 
 
-#@login_required
-#@user_passes_test(is_member)
+@login_required
+@user_passes_test(is_member)
 @csrf_protect
 def take_quiz(request, course_id, username):
     current_learner = Learner.objects.get(username=username)
-    # print(current_learner)
     current_course = Course.objects.get(id=course_id)
-    # print(current_course)
     learner_progress = Progress.objects.get(learner=current_learner, course=current_course).latest_progress
-    # print(learner_progress)
     current_module = current_course.module_set.get(order=learner_progress)
-    # print(current_module.title)
     question_list = list(current_module.quizquestion_set.filter(selected=True))
 
     if request.method == 'POST':
         form = QuizForm(request.POST or None, questions=question_list)
         total = 0
+
         if form.is_valid():
             for (question_description, answer) in form.answers():
                 choice = QuizChoice.objects.get(choice_text=answer)
+                print(choice.choice_text)
                 total += choice.value
+                print(choice.value)
                 quiz_result = QuizResult.objects.get(learner=current_learner, course=current_course)
                 quiz_result.total_score = total
                 quiz_result.save()
 
-            return redirect('learners:view_result', module_id=current_module.id)
+            return redirect('learners:view_result', course_id=course_id, username=username)
     else:
         form = QuizForm(questions=question_list)
 
-    #print(course_id)
-    #print(username)
     return render(request, 'take_quiz.html', {'form': form,
                                               'course_id': course_id,
                                               'username': username,
                                               })
 
 
-#@login_required
-#@user_passes_test(is_member)
+@login_required
+@user_passes_test(is_member)
 def view_result(request, course_id, username):
     # Get learner, course, and progress
     current_learner = Learner.objects.get(username=username)
@@ -217,11 +253,11 @@ def update_learner_history(username, course_id, time):
     learner_history.save()
 
 
-def view_completed_course(request, username):
-    current_learner = Learner.objects.get(username=username)
+def view_completed_course(request):
+    learner = Learner.objects.get(username=request.user.username)
+    learner_history = EnrollmentHistory.objects.filter(learner=learner, completed=True)
     course_taken = []
-    learner_history = EnrollmentHistory.objects.filter(learner=current_learner, completed=True)
     for i in range(len(learner_history)):
-        course_taken.append(learner_history[i].course)
-    # print(course_taken)
-    return render(request, 'completed_course.html', {'courses': course_taken})
+        course_taken.append((learner_history[i].course, learner_history[i].date_completed))
+
+    return render(request, 'completed_course.html', {'course_taken': course_taken})
