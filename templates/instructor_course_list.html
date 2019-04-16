@@ -5,7 +5,7 @@
     <div class="courses">
         {% for course in courses %}
             <h2><a class="redirect_link"
-                   href="{% url 'instructors:instructor-modules' slug=course.slug %}">{{ course.title }}</a>
+                   href="{% url 'instructors:instructor-modules' course_id=course.id %}">{{ course.title }}</a>
             </h2>
 
             <div class="row">

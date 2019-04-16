@@ -23,7 +23,6 @@ from django.contrib.auth.models import User,Group
 import urllib.request
 import json
 
-
 def is_member(user):
     return user.groups.filter(name='learner').exists()
 staff_id= "00003297"
@@ -93,35 +92,37 @@ def user_center(request):
 @login_required
 @user_passes_test(is_member)
 def active_course(request, category):
-    categories = Course.objects.order_by().values_list('category', flat=True).distinct()
+    categories = Category.objects.all()
     if category == 'all':
         activecourses = Course.objects.all()
     else:
         activecourses = Course.objects.filter(category=category)
     return render(request, 'usercenter-activecourse.html', {'courses': activecourses, 'categories': categories})
 
-
-@user_passes_test(is_member)
-def modules(request,slug):
-    progress = Progress.objects.get(id=1);
-    course = Course.objects.get(slug=slug)
-    modules = Module.objects.filter(Course_id=course.id)
-    return render(request, 'learner_modules.html', {'course': course, 'modules': modules, 'progress': progress.latest_progress})
-
 @login_required
-@user_passes_test(is_member)
-def course_detail(request, course_id):
+def course_detail(request,course_id):
     course = Course.objects.get(id=course_id)
-    return render(request, 'learner_course_detail.html',
-                  {'course': course} )
+    return render(request, 'learner_course_detail.html', {'course': course})
+
+
+@user_passes_test(is_member)
+def modules(request,course_id):
+    current_learner = Learner.objects.get(username=request.user.username)
+    course = Course.objects.get(id=course_id)
+    learner_progress = Progress.objects.get(learner=current_learner, course=course)
+    modules = Module.objects.filter(Course_id=course.id)
+    return render(request, 'learner_modules.html', {'course': course, 'modules': modules,
+                                                    'progress': learner_progress.latest_progress})
 
 @login_required
 @user_passes_test(is_member)
 def module_detail(request, moduleid): # TODO: Connect with a better URL
+    username = request.user.username
     module = Module.objects.get(id=moduleid)
-    progress = Progress.objects.get(id=1)
+    course =  module.Course
+    progress = Progress.objects.get(learner__username=username, course=course)
     components = Component.objects.filter(Module_id=module.id)
-    return render(request, 'learner_module_detail.html', {'components': components, 'module': module, 'progress': progress.latest_progress})
+    return render(request, 'learner_module_detail.html', {'components': components,'username':username, 'module': module, 'progress': progress.latest_progress})
 
 
 
@@ -150,7 +151,7 @@ def take_quiz(request, course_id, username):
                 quiz_result.total_score = total
                 quiz_result.save()
 
-            return redirect('learners:view_result', module_id=module_id)
+            return redirect('learners:view_result', module_id=current_module.id)
     else:
         form = QuizForm(questions=question_list)
 
@@ -224,4 +225,3 @@ def view_completed_course(request, username):
         course_taken.append(learner_history[i].course)
     # print(course_taken)
     return render(request, 'completed_course.html', {'courses': course_taken})
-
