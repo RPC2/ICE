@@ -5,16 +5,12 @@ app_name = 'instructors'
 
 urlpatterns = [
     url(r'^$', views.instructor_course_list, name="list"),
-<<<<<<< HEAD
     url(r'^signup$', views.send_email, name ="send_email"),
     url(r'^waitforactivation$', views.waitforactivation, name="waitforactivation"),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
     url(r'^activatecomplete', views.activate_complete, name="activate_complete"),
     url(r'^modules/(?P<slug>[\w-]+)/$', views.instructor_modules, name="instructor-modules"),
-=======
-    url(r'^modules/(?P<course_id>[\w-]+)/$', views.instructor_modules, name="instructor-modules"),
->>>>>>> 48d2eadf579814b877f0cd42dd80f2ea51bb4c45
     url(r'^modules/addcourse$', views.add_course, name="instructor-add-course"),
     url(r'^modules/addmodule/(?P<courseid>[\w-]+)/$', views.add_module, name="instructor-add-module"),
     url(r'^module-detail/module(?P<moduleid>[\w-]+)/$', views.instructor_components, name="instructor-module-detail"),
