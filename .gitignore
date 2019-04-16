@@ -1,12 +1,7 @@
 .idea/
 *.pyc
 */.DS_store
-/db/*.sqlite3
-/db/*.sqlite3-journal
-db.sqlite3
 # Created by https://www.gitignore.io
-/db/*.sqlite3
-/db/*.sqlite3-journal
 ### OSX ###
 .DS_Store
 .AppleDouble
@@ -93,7 +88,5 @@ __pycache__/
 local_settings.py
 
 .env
-db.sqlite3
-
 # Dropbox
 Icon*
