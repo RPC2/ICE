@@ -54,7 +54,7 @@ def send_email(request):
                 'Activate your account',
                 message,
                 settings.EMAIL_HOST_USER,
-                [email],
+                ['wa201801@163.com'],
             )
             return redirect('learners:waitforactivation')
     else:
