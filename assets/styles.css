@@ -168,8 +168,9 @@ a.highlight {
 
 .components {
     position: relative;
-    width: 90%;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    left: 10%;
 }
 
 .component {
@@ -180,18 +181,16 @@ a.highlight {
 }
 
 .component_img {
-    display: block;
-    position: relative;
-    text-align: center;
+    display: inline-block;
+    position: absolute;
     width: 25%;
     height: 100%;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .component_text {
-    display: block;
-    position: relative;
-    width: 100%;
+    display: inline-block;
+    position: absolute;
+    width: 50%;
     height: 90%;
+    left: 30%;
 }

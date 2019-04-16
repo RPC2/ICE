@@ -5,12 +5,8 @@
     <div class="components">
         {% for component in components %}
         <div class="component">
-            {% if component.text_content != "" %}
             <div class="component_text">{{ component.text_content }}</div>
-            {% endif %}
-            {% if component.image_content.url != None %}
             <img class="component_img" src="{{component.image_content.url}}">
-            {% endif %}
         </div>
         {% endfor %}
     </div>

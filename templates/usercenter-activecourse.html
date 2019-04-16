@@ -2,10 +2,10 @@
 {% block content%}
     <div class="courses">
     {% for category in categories %}
-        <a class = "redirect_button" href="{% url 'learners:active-course' category=category.id %}" >{{ category }}</a>
+        <a class = "redirect_button" href="{% url 'learners:active-course' category=category %}" >{{ category }}</a>
     {% endfor %}
     {% for course in courses %}
-            <h2><a class="redirect_link" href="{% url 'learners:modules' course_id=course.id %}">{{ course.title }}</a></h2>
+            <h2><a class="redirect_link" href="{% url 'learners:modules' slug=course.slug %}">{{ course.title }}</a></h2>
             <div class="row">
                 <div class="col-sm-3">
                     <img class="img-sized"src="{{course.thumb.url}}">

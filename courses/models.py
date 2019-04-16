@@ -6,15 +6,9 @@ import datetime
 
 
 # Create your models here.
-class Category(models.Model):
-    category = models.CharField(max_length=200)
-    def __str__(self):
-        return self.category
-
-
 class Course(models.Model):
     title = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.CharField(max_length=100, default="renjie")
     slug = models.SlugField()
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
@@ -40,19 +34,18 @@ class Module(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     Course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
     order = models.IntegerField(default=1)
-    pass_score = models.IntegerField(default=0, null=True, blank= True)
+
     def __str__(self):
         return self.title
 
 
 class Component(models.Model):
     title = models.CharField(max_length=100)
-    text_content = models.TextField(blank=True, null=True)
-    image_content = models.ImageField(blank=True, null=True)
+    text_content = models.TextField()
+    image_content = models.ImageField(default='default.png', blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
-    Course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
-    Module = models.ForeignKey(Module, null=True, on_delete=models.CASCADE, blank=True)
+    Module = models.ForeignKey(Module, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -95,7 +88,7 @@ class QuizResult(models.Model):
 
 
 class EnrollmentHistory(models.Model):
-    completed = models.BooleanField(default=False)
+    completed = models.BooleanField(default=True)
     date_completed = models.DateField("Date", default=datetime.date.today)
     learner = models.ForeignKey(Learner, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
