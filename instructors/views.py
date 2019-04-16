@@ -97,7 +97,7 @@ def instructor_components(request, moduleid):
 @user_passes_test(is_member)
 def add_course(request):
     if request.method == 'POST':
-        form = forms.createCourse(request.POST,request.FILES)
+        form = createCourse(request.POST,request.FILES)
         if form.is_valid():
             #save course to DB
             instance = form.save(commit=False)
@@ -106,14 +106,14 @@ def add_course(request):
             instance.save()
             return redirect('instructors:list')
     else:
-        form = forms.createCourse()
+        form = createCourse()
         return render(request, 'add_course.html', {'form':form})
 
 @login_required
 @user_passes_test(is_member)
 def add_module(request, courseid):
     if request.method == 'POST':
-        form = forms.createModule(request.POST,request.FILES)
+        form = createModule(request.POST,request.FILES)
         if form.is_valid():
             #save module to DB
             instance = form.save(commit=False)
@@ -124,7 +124,7 @@ def add_module(request, courseid):
             instance.save()
             return redirect('instructors:instructor-modules', course_id=course.id)
     else:
-        form = forms.createModule()
+        form = createModule()
         return render(request, 'add_module.html', {'form':form, 'courseid':courseid})
 
 @login_required
@@ -133,7 +133,7 @@ def add_component(request, moduleid):
     module = Module.objects.get(id = moduleid)
     course_id = module.Course_id
     if request.method == 'POST':
-        form = forms.addComponent(request.POST,request.FILES, courseid=course_id)
+        form = addComponent(request.POST,request.FILES, courseid=course_id)
         if form.is_valid():
             #save component to DB
             componentids = form.cleaned_data.get('components')
@@ -143,14 +143,14 @@ def add_component(request, moduleid):
                 component.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
-        form = forms.addComponent(courseid=course_id)
+        form = addComponent(courseid=course_id)
         return render(request, 'add_component.html', {'form':form, 'moduleid':moduleid})
 
 @login_required
 @user_passes_test(is_member)
 def add_quiz(request, moduleid):
     if request.method == 'POST':
-        form = forms.createQuiz(request.POST, moduleid= moduleid)
+        form = createQuiz(request.POST, moduleid= moduleid)
         if form.is_valid():
             #switch selected to True
             questionids = form.cleaned_data.get('questions')
@@ -164,7 +164,7 @@ def add_quiz(request, moduleid):
             module.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
-        form = forms.createQuiz(moduleid= moduleid)
+        form = createQuiz(moduleid= moduleid)
         return render(request, 'add_quiz.html', {'form':form, 'moduleid':moduleid})
 
 
