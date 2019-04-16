@@ -19,8 +19,3 @@ urlpatterns = [
 
 ]
 
-<<<<<<< HEAD
-"""url(r'^take_quiz/(?P<course_title>[\w-]+)/(?P<username>[\w-]+)$', views.take_quiz, name='take_quiz'),
-    url(r'^view_result/(?P<course_title>[\w-]+)/(?P<username>[\w-]+)$', views.view_result, name='view_result'),"""
-=======
->>>>>>> 48d2eadf579814b877f0cd42dd80f2ea51bb4c45
