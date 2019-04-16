@@ -23,7 +23,6 @@ from django.contrib.auth.models import User,Group
 import urllib.request
 import json
 
-
 def is_member(user):
     return user.groups.filter(name='learner').exists()
 staff_id= "00003297"
@@ -226,4 +225,3 @@ def view_completed_course(request, username):
         course_taken.append(learner_history[i].course)
     # print(course_taken)
     return render(request, 'completed_course.html', {'courses': course_taken})
-
