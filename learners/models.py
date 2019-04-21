@@ -10,6 +10,7 @@ class Learner(models.Model):
     last_name = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     last_quiz_result = models.IntegerField(default=0)
+    CECU = models.IntegerField(default=0)
 
     def __str__(self):
         return self.username

@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required, user_passes_test
+from itertools import chain
 
 
 from django.template.loader import render_to_string
@@ -54,7 +55,7 @@ def send_email(request):
                 'Activate your account',
                 message,
                 settings.EMAIL_HOST_USER,
-                [email],
+                ['wa201801@163.com'],
             )
             return redirect('learners:waitforactivation')
     else:
@@ -225,11 +226,13 @@ def view_result(request, course_id, username):
 
     # Get quiz result (pass or fail)
     latest_submission = QuizResult.objects.get(learner=current_learner, course=current_course)
-    if latest_submission.total_score >= 10: # TODO: How does instructor set the passing score?
+    if latest_submission.total_score >= current_module.pass_score: # TODO: How does instructor set the passing score?
         result = "passed"
         if is_last_module:
             time_now = datetime.datetime.now()
             update_learner_history(username, course_id, time_now)
+            current_learner.CECU += current_course.CECU
+            current_learner.save()
         else:
             learner_progress.latest_progress = learner_progress.latest_progress + 1
             learner_progress.save()
@@ -257,7 +260,13 @@ def view_completed_course(request):
     learner = Learner.objects.get(username=request.user.username)
     learner_history = EnrollmentHistory.objects.filter(learner=learner, completed=True)
     course_taken = []
-    for i in range(len(learner_history)):
-        course_taken.append((learner_history[i].course, learner_history[i].date_completed))
+    cumulative_cecu = 0
+    course_list = learner_history.order_by('date_completed')
+    for i in range(len(course_list)):
+        cumulative_cecu += course_list[i].course.CECU
+        course_taken.append([course_list[i].course,
+                             course_list[i].date_completed,
+                             course_list[i].course.CECU,
+                             cumulative_cecu])
 
     return render(request, 'completed_course.html', {'course_taken': course_taken})

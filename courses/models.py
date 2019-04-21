@@ -21,7 +21,7 @@ class Course(models.Model):
     open_status = models.BooleanField(default=True)
     thumb = models.ImageField(default='default.png', blank=True)
     CECU = models.IntegerField(default=1)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE,null=True, blank=True)
 
     # progress = models.ManyToManyField(Learner, through='Progress')
 
