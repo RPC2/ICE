@@ -16,7 +16,7 @@ class SignupForm(forms.Form):
 class createCourse(forms.ModelForm):
     class Meta:
         model = models.Course
-        fields = ['title', 'description', 'thumb', 'slug', 'category', 'CECU', 'category']
+        fields = ['title', 'description', 'thumb', 'category', 'CECU', 'category']
 
 class createModule(forms.ModelForm):
     class Meta:

@@ -102,7 +102,7 @@ def add_course(request):
             #save course to DB
             instance = form.save(commit=False)
             instance.instructor_user_id = request.user.id
-            instance.instructor_id = request.user.id
+            # instance.instructor_id = request.user.id
             instance.save()
             return redirect('instructors:list')
     else:
