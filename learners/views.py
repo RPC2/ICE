@@ -233,6 +233,17 @@ def view_result(request, course_id, username):
             update_learner_history(username, course_id, time_now)
             current_learner.CECU += current_course.CECU
             current_learner.save()
+            message = render_to_string('learner_pass_course.html', {
+                'learner':current_learner.first_name,
+                 'course':current_course.title,
+                 'CECU':current_course.CECU
+            })
+            send_mail(
+                'You have completed course',
+                message,
+                settings.EMAIL_HOST_USER,
+                [current_learner.email],
+            )
         else:
             learner_progress.latest_progress = learner_progress.latest_progress + 1
             learner_progress.save()
