@@ -10,17 +10,19 @@ from .forms import *
 from instructors.models import *
 from django.core.mail import send_mail
 from django.conf import settings
-from django.utils.encoding import force_text,force_bytes
-from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
+from django.utils.encoding import force_text, force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.auth.models import User,Group
+from django.contrib.auth.models import User, Group
 import urllib.request
 
 instructor_email = 'loganwanghk@gmail.com'
 
+
 def is_member(user):
     return user.groups.filter(name='instructor').exists()
+
 
 def send_email(request):
     if request.method == 'POST':
@@ -41,11 +43,13 @@ def send_email(request):
             )
             return redirect('instructors:waitforactivation')
     else:
-        form =SendEmailForm()
+        form = SendEmailForm()
     return render(request, 'instructor_signup.html', {'form': form})
 
+
 def waitforactivation(request):
-    return render(request,'waitforactivation.html')
+    return render(request, 'waitforactivation.html')
+
 
 def activate(request, uidb64, token):
     if request.method == 'POST':
@@ -56,15 +60,17 @@ def activate(request, uidb64, token):
             first_name = form.cleaned_data.get('first_name')
             last_name = form.cleaned_data.get('last_name')
             autobiography = form.cleaned_data.get('autobiography')
-            user=User.objects.create_user(username=username,password=password,first_name=first_name,last_name=last_name,
-                                     email = instructor_email)
-            instructor = Instructor.objects.create(username = username)
+            user = User.objects.create_user(username=username, password=password, first_name=first_name,
+                                            last_name=last_name,
+                                            email=instructor_email)
+            instructor = Instructor.objects.create(username=username)
             my_group = Group.objects.get(name='instructor')
             my_group.user_set.add(user)
             return redirect('instructors:activate_complete')
     else:
         form = SignupForm()
     return render(request, 'instructor_activate.html', {'form': form})
+
 
 def activate_complete(request):
     return render(request, 'instructor_activate_complete.html')
@@ -83,23 +89,25 @@ def instructor_course_list(request):
 @user_passes_test(is_member)
 def instructor_modules(request, course_id):
     course = Course.objects.get(id=course_id)
-    modules = Module.objects.filter(Course_id = course.id)
+    modules = Module.objects.filter(Course_id=course.id).order_by('order')
     return render(request, 'instructor_module_list.html', {'course': course, 'modules': modules})
+
 
 @login_required
 @user_passes_test(is_member)
 def instructor_components(request, moduleid):
     module = Module.objects.get(id=moduleid)
-    components = Component.objects.filter(Module_id = module.id)
+    components = Component.objects.filter(Module_id=module.id).order_by('order')
     return render(request, 'instructor_module_detail.html', {'components': components, 'module': module})
+
 
 @login_required
 @user_passes_test(is_member)
 def add_course(request):
     if request.method == 'POST':
-        form = createCourse(request.POST,request.FILES)
+        form = createCourse(request.POST, request.FILES)
         if form.is_valid():
-            #save course to DB
+            # save course to DB
             instance = form.save(commit=False)
             instance.instructor_user_id = request.user.id
             # instance.instructor_id = request.user.id
@@ -107,52 +115,117 @@ def add_course(request):
             return redirect('instructors:list')
     else:
         form = createCourse()
-        return render(request, 'add_course.html', {'form':form})
+        return render(request, 'add_course.html', {'form': form})
+
 
 @login_required
 @user_passes_test(is_member)
 def add_module(request, courseid):
     if request.method == 'POST':
-        form = createModule(request.POST,request.FILES)
+        form = createModule(request.POST, request.FILES)
         if form.is_valid():
-            #save module to DB
+            # save module to DB
             instance = form.save(commit=False)
             course = Course.objects.get(id=courseid)
-            order = Module.objects.filter(Course = course).count() + 1
             instance.Course = course
-            instance.order = order
+            if (instance.order is None):
+                order = Module.objects.filter(Course=course).count() + 1
+                instance.order = order
+            if (Module.objects.filter(order=instance.order).exists()):
+                collision_module = Module.objects.get(Course=course, order=instance.order)
+                collision_module.order = Module.objects.filter(Course=course).count() + 1
+                collision_module.save()
             instance.save()
             return redirect('instructors:instructor-modules', course_id=course.id)
     else:
         form = createModule()
-        return render(request, 'add_module.html', {'form':form, 'courseid':courseid})
+        return render(request, 'add_module.html', {'form': form, 'courseid': courseid})
+
+@login_required
+@user_passes_test(is_member)
+def reorder_module(request, courseid):
+    if request.method == 'POST':
+        form = reorderModule(request.POST, request.FILES, courseid=courseid)
+        if form.is_valid():
+            # save component to DB
+            moduleid = form.cleaned_data.get('module')
+            order = form.cleaned_data.get('order')
+            module = Module.objects.get(id=moduleid)
+            if (order is not None):
+                if (Module.objects.filter(Course_id=courseid, order=order).exists()):
+                    collision_module = Module.objects.get(Course_id=courseid, order=order)
+                    collision_module.order = module.order
+                    collision_module.save()
+                module.order = order
+            module.save()
+            return redirect('instructors:instructor-modules', course_id=courseid)
+    else:
+        form = reorderModule(courseid=courseid)
+        return render(request, 'reorder_module.html', {'form': form, 'courseid': courseid})
 
 @login_required
 @user_passes_test(is_member)
 def add_component(request, moduleid):
-    module = Module.objects.get(id = moduleid)
+    module = Module.objects.get(id=moduleid)
     course_id = module.Course_id
     if request.method == 'POST':
-        form = addComponent(request.POST,request.FILES, courseid=course_id)
+        form = addComponent(request.POST, request.FILES, courseid=course_id)
         if form.is_valid():
-            #save component to DB
+            # save component to DB
             componentids = form.cleaned_data.get('components')
+            order = form.cleaned_data.get('order')
             for id in componentids:
                 component = Component.objects.get(id=id)
-                component.Module_id =moduleid
+                component.Module_id = moduleid
+                if (order is None):
+                    order = Component.objects.filter(Course_id=course_id, Module_id=moduleid).count() + 1
+                    component.order = order
+                else:
+                    if (Component.objects.filter(Course_id=course_id, Module_id=moduleid, order=order).exists()):
+                        collision_component = Component.objects.get(Course_id=course_id, Module_id=moduleid, order=order)
+                        collision_component.order = Component.objects.filter(Course_id=course_id,
+                                                                          Module_id=moduleid).count() + 1
+                        collision_component.save()
+                    component.order = order
                 component.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
         form = addComponent(courseid=course_id)
-        return render(request, 'add_component.html', {'form':form, 'moduleid':moduleid})
+        return render(request, 'add_component.html', {'form': form, 'moduleid': moduleid})
+
+
+@login_required
+@user_passes_test(is_member)
+def reorder_component(request, moduleid):
+    module = Module.objects.get(id=moduleid)
+    course_id = module.Course_id
+    if request.method == 'POST':
+        form = reorderComponent(request.POST, request.FILES, courseid=course_id, moduleid=moduleid)
+        if form.is_valid():
+            # save component to DB
+            componentid = form.cleaned_data.get('components')
+            order = form.cleaned_data.get('order')
+            component = Component.objects.get(id=componentid)
+            if (order is not None):
+                if (Component.objects.filter(Course_id=course_id, Module_id=moduleid, order=order).exists()):
+                    collision_component = Component.objects.get(Course_id=course_id, Module_id=moduleid, order=order)
+                    collision_component.order = component.order
+                    collision_component.save()
+                component.order = order
+            component.save()
+            return redirect('instructors:instructor-module-detail', moduleid=module.id)
+    else:
+        form = reorderComponent(courseid=course_id, moduleid=moduleid)
+        return render(request, 'reorder_component.html', {'form': form, 'moduleid': moduleid})
+
 
 @login_required
 @user_passes_test(is_member)
 def add_quiz(request, moduleid):
     if request.method == 'POST':
-        form = createQuiz(request.POST, moduleid= moduleid)
+        form = createQuiz(request.POST, moduleid=moduleid)
         if form.is_valid():
-            #switch selected to True
+            # switch selected to True
             questionids = form.cleaned_data.get('questions')
             pass_score = form.cleaned_data.get('pass_score')
             for id in questionids:
@@ -164,8 +237,8 @@ def add_quiz(request, moduleid):
             module.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
-        form = createQuiz(moduleid= moduleid)
-        return render(request, 'add_quiz.html', {'form':form, 'moduleid':moduleid})
+        form = createQuiz(moduleid=moduleid)
+        return render(request, 'add_quiz.html', {'form': form, 'moduleid': moduleid})
 
 
 @login_required
@@ -177,7 +250,8 @@ def instructor_view_quiz(request, moduleid):
     choices = {}
     for question in questions:
         if question.selected == True:
-            answers = QuizChoice.objects.filter(question_id = question.id)
+            answers = QuizChoice.objects.filter(question_id=question.id)
             choices[question] = answers
 
-    return render(request, 'instructor_view_quiz.html', {'questions': questions, 'choices': choices, 'module_title':module.title})
+    return render(request, 'instructor_view_quiz.html',
+                  {'questions': questions, 'choices': choices, 'module_title': module.title})

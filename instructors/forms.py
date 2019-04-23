@@ -21,8 +21,7 @@ class createCourse(forms.ModelForm):
 class createModule(forms.ModelForm):
     class Meta:
         model = models.Module
-        fields = ['title']
-
+        fields = ['title', 'order']
 
 class addComponent(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -33,6 +32,30 @@ class addComponent(forms.Form):
         super(addComponent, self).__init__(*args, **kwargs)
         self.fields['components'] = forms.MultipleChoiceField(choices=COMPONENT_CHOICES, required=False,
                                                              widget=forms.CheckboxSelectMultiple())
+        self.fields['order'] = forms.IntegerField(max_value=100,required = False, min_value = 1)
+
+class reorderModule(forms.Form):
+    def __init__(self, *args, **kwargs):
+        # print(kwargs)
+        self.courseid = kwargs.pop('courseid')
+        # QUESTION_CHOICES = models.QuizQuestion.objects.filter(module_id=self.moduleid)
+        MODULE_CHOICES = [[x.id, x.title] for x in models.Module.objects.filter(Course_id=self.courseid) ]
+        super(reorderModule, self).__init__(*args, **kwargs)
+        self.fields['module'] = forms.CharField(required=False,
+                                                             widget=forms.Select(choices=MODULE_CHOICES))
+        self.fields['order'] = forms.IntegerField(max_value=100,required = True, min_value = 1)
+
+class reorderComponent(forms.Form):
+    def __init__(self, *args, **kwargs):
+        # print(kwargs)
+        self.courseid = kwargs.pop('courseid')
+        self.moduleid = kwargs.pop('moduleid')
+        # QUESTION_CHOICES = models.QuizQuestion.objects.filter(module_id=self.moduleid)
+        COMPONENT_CHOICES = [[x.id, x.title] for x in models.Component.objects.filter(Course_id=self.courseid, Module_id = self.moduleid) ]
+        super(reorderComponent, self).__init__(*args, **kwargs)
+        self.fields['components'] = forms.CharField(required=False,
+                                                             widget=forms.Select(choices=COMPONENT_CHOICES))
+        self.fields['order'] = forms.IntegerField(max_value=100,required = True, min_value = 1)
 
 class createQuiz(forms.Form):
     def __init__(self, *args, **kwargs):

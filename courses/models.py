@@ -39,7 +39,7 @@ class Module(models.Model):
     title = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
     Course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
-    order = models.IntegerField(default=1)
+    order = models.PositiveIntegerField(null=True, blank= True)
     pass_score = models.IntegerField(default=0, null=True, blank= True)
     def __str__(self):
         return self.title
@@ -51,6 +51,7 @@ class Component(models.Model):
     image_content = models.ImageField(blank=True, null=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
+    order = models.PositiveIntegerField(null=True, blank= True)
     Course = models.ForeignKey(Course, on_delete=models.CASCADE, default=1)
     Module = models.ForeignKey(Module, null=True, on_delete=models.CASCADE, blank=True)
 
