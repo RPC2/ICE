@@ -18,6 +18,8 @@ urlpatterns = [
     url(r'^modules/addmodule/(?P<courseid>[\w-]+)/$', views.add_module, name="instructor-add-module"),
     url(r'^module-detail/module(?P<moduleid>[\w-]+)/$', views.instructor_components, name="instructor-module-detail"),
     url(r'^modules/(?P<moduleid>[\w-]+)/addcomponent/$', views.add_component, name="instructor-add-component"),
+    url(r'^modules/(?P<moduleid>[\w-]+)/reordercomponent/$', views.reorder_component, name="instructor-reorder-component"),
+    url(r'^modules/(?P<courseid>[\w-]+)/reordermodule/$', views.reorder_module, name="instructor-reorder-module"),
     url(r'^modules/(?P<moduleid>[\w-]+)/addquiz/$', views.add_quiz, name="instructor-add-quiz"),
     url(r'^modules/(?P<moduleid>[\w-]+)/viewquiz/$', views.instructor_view_quiz, name="instructor-view-quiz"),
 ]
