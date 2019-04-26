@@ -157,12 +157,9 @@ def modules(request,course_id):
 @login_required
 @user_passes_test(is_member)
 def module_detail(request, moduleid): # TODO: Connect with a better URL
-    username = request.user.username
     module = Module.objects.get(id=moduleid)
-    course = module.Course
-    progress = Progress.objects.get(learner__username=username, course=course)
     components = Component.objects.filter(Module_id=module.id)
-    return render(request, 'learner_module_detail.html', {'components': components,'username':username, 'module': module, 'progress': progress.latest_progress})
+    return render(request, 'learner_module_detail.html', {'components': components})
 
 
 
@@ -183,9 +180,7 @@ def take_quiz(request, course_id, username):
         if form.is_valid():
             for (question_description, answer) in form.answers():
                 choice = QuizChoice.objects.get(choice_text=answer)
-                print(choice.choice_text)
                 total += choice.value
-                print(choice.value)
                 quiz_result = QuizResult.objects.get(learner=current_learner, course=current_course)
                 quiz_result.total_score = total
                 quiz_result.save()
@@ -209,7 +204,6 @@ def view_result(request, course_id, username):
     learner_progress = Progress.objects.get(learner=current_learner, course=current_course)
 
     # Get module info
-    print(current_course.module_set.all)
     current_module = current_course.module_set.filter(order=learner_progress.latest_progress)[0]
 
     # print(current_module.title)
