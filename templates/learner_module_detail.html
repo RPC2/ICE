@@ -17,6 +17,6 @@
     {% if progress <= module.order %}
         <a class = "redirect_button" href="{% url 'learners:take_quiz' course_id=module.Course_id username=username%}" style="display: block;">Take Quiz</a>
     {% endif %}
-    <a class = "redirect_button" href="{% url 'learners:course_detail' course_id=module.Course_id %}" style="display: block;">Back to Modules</a>
+    <a class = "redirect_button" href="{% url 'learners:modules' course_id=module.Course_id %}" style="display: block;">Back to Modules</a>
 </div>
 {% endblock %}

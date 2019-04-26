@@ -131,7 +131,7 @@ def add_module(request, courseid):
             if (instance.order is None):
                 order = Module.objects.filter(Course=course).count() + 1
                 instance.order = order
-            if (Module.objects.filter(order=instance.order).exists()):
+            if (Module.objects.filter(order=instance.order, Course_id=courseid).exists()):
                 collision_module = Module.objects.get(Course=course, order=instance.order)
                 collision_module.order = Module.objects.filter(Course=course).count() + 1
                 collision_module.save()

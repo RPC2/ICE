@@ -131,6 +131,7 @@ def enroll_course(request, course_id):
     progress.save()
     quiz_result = QuizResult.objects.create(learner=learner, course=course, total_score=0)
     quiz_result.save()
+    modules = Module.objects.filter(Course_id = course_id)
 
     return render(request, 'learner_modules.html', {'course': course, 'modules': modules,
                                                     'progress': progress.latest_progress})
@@ -148,7 +149,7 @@ def modules(request,course_id):
     current_learner = Learner.objects.get(username=request.user.username)
     course = Course.objects.get(id=course_id)
     learner_progress = Progress.objects.get(learner=current_learner, course=course)
-    modules = Module.objects.filter(Course_id=course.id)
+    modules = Module.objects.filter(Course_id=course.id).order_by('order')
     return render(request, 'learner_modules.html', {'course': course, 'modules': modules,
                                                     'progress': learner_progress.latest_progress})
 
@@ -159,7 +160,7 @@ def module_detail(request, moduleid): # TODO: Connect with a better URL
     module = Module.objects.get(id=moduleid)
     course = module.Course
     progress = Progress.objects.get(learner__username=username, course=course)
-    components = Component.objects.filter(Module_id=module.id)
+    components = Component.objects.filter(Module_id=module.id).order_by('order')
     return render(request, 'learner_module_detail.html', {'components': components,'username':username, 'module': module, 'progress': progress.latest_progress})
 
 
