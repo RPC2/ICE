@@ -6,8 +6,6 @@ from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required, user_passes_test
 from itertools import chain
-
-
 from django.template.loader import render_to_string
 from .forms import *
 from .models import *
@@ -22,7 +20,7 @@ from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.models import User,Group
 import urllib.request
-import json
+import json,random
 
 def is_member(user):
     return user.groups.filter(name='learner').exists()
@@ -174,8 +172,19 @@ def take_quiz(request, course_id, username):
     current_course = Course.objects.get(id=course_id)
     learner_progress = Progress.objects.get(learner=current_learner, course=current_course).latest_progress
     current_module = current_course.module_set.get(order=learner_progress)
-    question_list = list(current_module.quizquestion_set.filter(selected=True))
+    question_number=current_module.question_number
 
+    QUESTION_CHOICES = [x.id for x in QuizQuestion.objects.filter(module_id=current_module.id) ]
+    for i in QUESTION_CHOICES:
+        question = QuizQuestion.objects.get(id=i)
+        question.selected = False
+        question.save()
+    questionids=random.sample(QUESTION_CHOICES,question_number)
+    for i in questionids:
+        question = QuizQuestion.objects.get(id=i)
+        question.selected = True
+        question.save()
+    question_list = list(current_module.quizquestion_set.filter(selected=True))
     if request.method == 'POST':
         form = QuizForm(request.POST or None, questions=question_list)
         total = 0
