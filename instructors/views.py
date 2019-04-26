@@ -228,12 +228,14 @@ def add_quiz(request, moduleid):
             # switch selected to True
             questionids = form.cleaned_data.get('questions')
             pass_score = form.cleaned_data.get('pass_score')
+            question_number = form.cleaned_data.get('question_number')
             for id in questionids:
                 question = QuizQuestion.objects.get(id=id)
                 question.selected = True
                 question.save()
             module = Module.objects.get(id=moduleid)
             module.pass_score = pass_score
+            module.question_number = question_number
             module.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:

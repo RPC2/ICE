@@ -67,3 +67,4 @@ class createQuiz(forms.Form):
         self.fields['questions'] = forms.MultipleChoiceField(choices=QUESTION_CHOICES, required=False,
                                                              widget=forms.CheckboxSelectMultiple())
         self.fields['pass_score'] = forms.IntegerField(min_value=0, max_value=100)
+        self.fields['question_number'] = forms.IntegerField(min_value=0, max_value=10)
