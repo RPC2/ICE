@@ -158,9 +158,23 @@ def modules(request,course_id):
 def module_detail(request, moduleid): # TODO: Connect with a better URL
     username = request.user.username
     module = Module.objects.get(id=moduleid)
-    course = module.Course
-    progress = Progress.objects.get(learner__username=username, course=course)
+    current_course = module.Course
+    progress = Progress.objects.get(learner__username=username, course=current_course)
     components = Component.objects.filter(Module_id=module.id).order_by('order')
+    current_learner = Learner.objects.get(username=username)
+    learner_progress = Progress.objects.get(learner=current_learner, course=current_course).latest_progress
+    question_number = module.question_number
+
+    QUESTION_CHOICES = [x.id for x in QuizQuestion.objects.filter(course_id=current_course.id, module_id=module.id)]
+    for i in QUESTION_CHOICES:
+        question = QuizQuestion.objects.get(id=i)
+        question.selected = False
+        question.save()
+    questionids = random.sample(QUESTION_CHOICES, question_number)
+    for i in questionids:
+        question = QuizQuestion.objects.get(id=i)
+        question.selected = True
+        question.save()
     return render(request, 'learner_module_detail.html', {'components': components,'username':username, 'module': module, 'progress': progress.latest_progress})
 
 
@@ -173,33 +187,28 @@ def take_quiz(request, course_id, username):
     current_course = Course.objects.get(id=course_id)
     learner_progress = Progress.objects.get(learner=current_learner, course=current_course).latest_progress
     current_module = current_course.module_set.get(order=learner_progress)
-    question_number=current_module.question_number
-
-    QUESTION_CHOICES = [x.id for x in QuizQuestion.objects.filter(module_id=current_module.id) ]
-    for i in QUESTION_CHOICES:
-        question = QuizQuestion.objects.get(id=i)
-        question.selected = False
-        question.save()
-    questionids=random.sample(QUESTION_CHOICES,question_number)
-    for i in questionids:
-        question = QuizQuestion.objects.get(id=i)
-        question.selected = True
-        question.save()
-    question_list = list(current_module.quizquestion_set.filter(selected=True))
+    question_list = list(current_course.quizquestion_set.filter(selected=True, module_id=current_module.id))
+    # question_list = list(current_course.quizquestion_set.filter(selected=True, id=current_module.id))
     if request.method == 'POST':
         form = QuizForm(request.POST or None, questions=question_list)
         total = 0
 
         if form.is_valid():
-            for (question_description, answer) in form.answers():
-                choice = QuizChoice.objects.get(choice_text=answer)
+            # for (question_description, answer) in form.cleaned_data():
+            choices = form.cleaned_data.values()
+            for choice in choices:
+                # choice = QuizChoice.objects.get(choice_text=answer)
                 print(choice.choice_text)
                 total += choice.value
                 print(choice.value)
                 quiz_result = QuizResult.objects.get(learner=current_learner, course=current_course)
                 quiz_result.total_score = total
                 quiz_result.save()
-
+            QUESTION_CHOICES = [x.id for x in QuizQuestion.objects.filter(course_id=current_course.id, module_id=current_module.id)]
+            for i in QUESTION_CHOICES:
+                question = QuizQuestion.objects.get(id=i)
+                question.selected = True
+                question.save()
             return redirect('learners:view_result', course_id=course_id, username=username)
     else:
         form = QuizForm(questions=question_list)
@@ -254,9 +263,9 @@ def view_result(request, course_id, username):
                 settings.EMAIL_HOST_USER,
                 [current_learner.email],
             )
-        else:
-            learner_progress.latest_progress = learner_progress.latest_progress + 1
-            learner_progress.save()
+        # else:
+        learner_progress.latest_progress = learner_progress.latest_progress + 1
+        learner_progress.save()
     else:
         result = 'failed'
 

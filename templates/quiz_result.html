@@ -16,7 +16,7 @@
     <a class="redirect_link" href="{% url 'learners:usercenter' %}">Back to Homepage</a>
 
 {% elif pass_or_fail == 'failed' %}
-    <a class="redirect_link" href="{% url 'learners:modules' moduleid=current_module_id %}">Go Back to Module</a>
+    <a class="redirect_link" href="{% url 'learners:module_detail' moduleid=current_module_id %}">Go Back to Module</a>
 {% endif %}
 
 {% endblock %}
