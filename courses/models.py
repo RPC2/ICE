@@ -70,8 +70,9 @@ class Progress(models.Model):
 
 class QuizQuestion(models.Model):
     question_text = models.CharField(max_length=200)
-    module = models.ForeignKey(Module, on_delete=models.CASCADE, default=0)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=0)
     selected = models.BooleanField(default=False)
+    module= models.ForeignKey(Module, on_delete=models.CASCADE, blank= True, null= True)
 
     def __str__(self):
         return self.question_text

@@ -222,8 +222,10 @@ def reorder_component(request, moduleid):
 @login_required
 @user_passes_test(is_member)
 def add_quiz(request, moduleid):
+    module = Module.objects.get(id = moduleid)
+    course_id = module.Course_id
     if request.method == 'POST':
-        form = createQuiz(request.POST, moduleid=moduleid)
+        form = createQuiz(request.POST, courseid=course_id)
         if form.is_valid():
             # switch selected to True
             questionids = form.cleaned_data.get('questions')
@@ -232,6 +234,7 @@ def add_quiz(request, moduleid):
             for id in questionids:
                 question = QuizQuestion.objects.get(id=id)
                 question.selected = True
+                question.module_id = moduleid
                 question.save()
             module = Module.objects.get(id=moduleid)
             module.pass_score = pass_score
@@ -239,7 +242,7 @@ def add_quiz(request, moduleid):
             module.save()
             return redirect('instructors:instructor-module-detail', moduleid=module.id)
     else:
-        form = createQuiz(moduleid=moduleid)
+        form = createQuiz(courseid=course_id)
         return render(request, 'add_quiz.html', {'form': form, 'moduleid': moduleid})
 
 
@@ -247,7 +250,7 @@ def add_quiz(request, moduleid):
 @user_passes_test(is_member)
 def instructor_view_quiz(request, moduleid):
     module = Module.objects.get(id=moduleid)
-    questions = QuizQuestion.objects.filter(module_id=moduleid);
+    questions = QuizQuestion.objects.filter(course_id=module.Course_id);
     # choices = QuizChoice.objects.filter(moduleid_id=moduleid);
     choices = {}
     for question in questions:

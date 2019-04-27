@@ -60,9 +60,9 @@ class reorderComponent(forms.Form):
 class createQuiz(forms.Form):
     def __init__(self, *args, **kwargs):
         # print(kwargs)
-        self.moduleid = kwargs.pop('moduleid')
+        self.courseid = kwargs.pop('courseid')
         # QUESTION_CHOICES = models.QuizQuestion.objects.filter(module_id=self.moduleid)
-        QUESTION_CHOICES = [[x.id, x.question_text] for x in models.QuizQuestion.objects.filter(module_id=self.moduleid) if x.selected==False ]
+        QUESTION_CHOICES = [[x.id, x.question_text] for x in models.QuizQuestion.objects.filter(course_id=self.courseid) if x.selected==False ]
         super(createQuiz, self).__init__(*args, **kwargs)
         self.fields['questions'] = forms.MultipleChoiceField(choices=QUESTION_CHOICES, required=False,
                                                              widget=forms.CheckboxSelectMultiple())

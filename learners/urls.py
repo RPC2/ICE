@@ -20,7 +20,7 @@ urlpatterns = [
 
     url(r'^activecourse/enroll/(?P<course_id>[\w-]+)/$', views.enroll_course, name="enroll_course"),
 
-    url(r'^activecourse/(?P<course_id>[\w-]+)/take_quiz/(?P<username>[\w-]+)$', views.take_quiz, name='take_quiz'),
+    url(r'^activecourse/(?P<course_id>[\w-]+)/take_quiz/(?P<username>[\w-]+)/$', views.take_quiz, name='take_quiz'),
     url(r'^activecourse/(?P<course_id>[\w-]+)/view_result/(?P<username>[\w-]+)$', views.view_result,
         name='view_result'),
 

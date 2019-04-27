@@ -12,7 +12,7 @@ class QuizForm(forms.Form):
                                                                     widget=forms.RadioSelect,
                                                                     empty_label=None)
 
-    def answers(self):
-        for name, value in self.cleaned_data.items():
-            if name.startswith('question_'):
-                yield (self.fields[name].label, value)
+    # def answers(self):
+    #     for name, value in self.cleaned_data.items():
+    #         if name.startswith('question_'):
+    #             yield (self.fields[name].label, value)

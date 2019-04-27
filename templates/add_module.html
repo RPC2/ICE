@@ -2,7 +2,7 @@
 
 {% block content%}
     <h1>Create Module</h1>
-    <form class="site-form" action="{% url 'instructors:instructor-add-module' courseid=courseid %}" method=post>
+    <form class="site-form" action="{% url 'instructors:instructor-add-module' courseid=courseid %}" method=post >
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Create">
