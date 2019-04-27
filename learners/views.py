@@ -24,7 +24,7 @@ import json,random
 
 def is_member(user):
     return user.groups.filter(name='learner').exists()
-staff_id= "00003297"
+staff_id= "00002123"
 first_name= "Sid"
 last_name= "Miglani"
 email= "sidhrmiglani@gmail.com"
@@ -53,7 +53,7 @@ def send_email(request):
                 'Activate your account',
                 message,
                 settings.EMAIL_HOST_USER,
-                ['wa201801@163.com'],
+                ['volarmorghulis@example.com'],
             )
             return redirect('learners:waitforactivation')
     else:
