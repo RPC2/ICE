@@ -164,17 +164,18 @@ def module_detail(request, moduleid): # TODO: Connect with a better URL
     current_learner = Learner.objects.get(username=username)
     learner_progress = Progress.objects.get(learner=current_learner, course=current_course).latest_progress
     question_number = module.question_number
+    if(question_number>0):
+        QUESTION_CHOICES = [x.id for x in QuizQuestion.objects.filter(course_id=current_course.id, module_id=module.id)]
+        for i in QUESTION_CHOICES:
+            question = QuizQuestion.objects.get(id=i)
+            question.selected = False
+            question.save()
+        questionids = random.sample(QUESTION_CHOICES, question_number)
+        for i in questionids:
+            question = QuizQuestion.objects.get(id=i)
+            question.selected = True
+            question.save()
 
-    QUESTION_CHOICES = [x.id for x in QuizQuestion.objects.filter(course_id=current_course.id, module_id=module.id)]
-    for i in QUESTION_CHOICES:
-        question = QuizQuestion.objects.get(id=i)
-        question.selected = False
-        question.save()
-    questionids = random.sample(QUESTION_CHOICES, question_number)
-    for i in questionids:
-        question = QuizQuestion.objects.get(id=i)
-        question.selected = True
-        question.save()
     return render(request, 'learner_module_detail.html', {'components': components,'username':username, 'module': module, 'progress': progress.latest_progress})
 
 
