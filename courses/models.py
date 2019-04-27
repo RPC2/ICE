@@ -15,7 +15,6 @@ class Category(models.Model):
 class Course(models.Model):
     title = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    slug = models.SlugField()
     description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     open_status = models.BooleanField(default=True)

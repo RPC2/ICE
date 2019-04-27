@@ -156,13 +156,13 @@ def modules(request,course_id):
 @login_required
 @user_passes_test(is_member)
 def module_detail(request, moduleid): # TODO: Connect with a better URL
+    username = request.user.username
     module = Module.objects.get(id=moduleid)
-    components = Component.objects.filter(Module_id=module.id)
-    return render(request, 'learner_module_detail.html', {'components': components})
     course = module.Course
     progress = Progress.objects.get(learner__username=username, course=course)
     components = Component.objects.filter(Module_id=module.id).order_by('order')
     return render(request, 'learner_module_detail.html', {'components': components,'username':username, 'module': module, 'progress': progress.latest_progress})
+
 
 
 
